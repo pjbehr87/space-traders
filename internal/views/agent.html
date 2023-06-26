@@ -1,0 +1,23 @@
+{{template "layout.html" .}}
+
+{{define "title"}}Agent{{end}}
+
+{{define "content"}}
+<div>
+	<div>
+		<strong>AccountID:</strong> {{ .AccountId }}
+	</div>
+	<div>
+		<strong>Symbol:</strong> {{ .Symbol }}
+	</div>
+	<div>
+		<strong>Headquarters:</strong> <a href="/systems/{{ .Headquarters.System }}/waypoints/{{ .Headquarters.Waypoint }}" >{{ .Headquarters.Waypoint }}</a>
+	</div>
+	<div>
+		<strong>Credits:</strong> {{ .Credits }}
+	</div>
+	<div>
+		<strong>StartingFaction:</strong> {{ .StartingFaction }}
+	</div>
+</div>
+{{end}}

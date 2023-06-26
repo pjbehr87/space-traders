@@ -1,0 +1,6 @@
+agent:
+  name:
+  token:
+server:
+  port: 8080
+  logLevel: DEBUG
