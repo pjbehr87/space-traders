@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 	stlib "space-traders/st-lib"
 
@@ -10,6 +9,12 @@ import (
 
 type SystemsController struct {
 	stl stlib.StLib
+}
+
+type WaypointPage struct {
+	Page
+
+	Waypoints []stlib.Waypoint
 }
 
 func NewSystemsController(e *echo.Echo, stl stlib.StLib) {
@@ -22,9 +27,22 @@ func NewSystemsController(e *echo.Echo, stl stlib.StLib) {
 }
 
 func (ctl *SystemsController) getSystemWaypoints(c echo.Context) error {
+	c.Logger().Info("GET Waypoint")
 	waypoints, err := ctl.stl.GetWaypoint(c.Param("systemSymbol"), c.Param("waypointSymbol"))
 	if err != nil {
+		c.Logger().Error(err.Error())
 		return c.String(http.StatusInternalServerError, "Error: "+err.Error())
 	}
-	return c.String(http.StatusOK, fmt.Sprintf("%+v\n", waypoints))
+	c.Logger().Debugf("Waypoints: %+v", waypoints)
+
+	err = c.Render(http.StatusOK, "waypoint", WaypointPage{
+		Page: Page{
+			PageName: "Waypoint",
+		},
+		Waypoints: waypoints,
+	})
+	if err != nil {
+		c.Logger().Error(err.Error())
+	}
+	return err
 }

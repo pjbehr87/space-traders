@@ -11,6 +11,12 @@ type AgentController struct {
 	stl stlib.StLib
 }
 
+type AgentPage struct {
+	Page
+
+	Agent stlib.Agent
+}
+
 func NewAgentController(e *echo.Echo, stl stlib.StLib) {
 	cont := AgentController{
 		stl: stl,
@@ -25,11 +31,16 @@ func (ctl *AgentController) getAgent(c echo.Context) error {
 	agent, err := ctl.stl.MyAgent()
 	if err != nil {
 		c.Logger().Error(err.Error())
-		c.String(http.StatusInternalServerError, "Error: "+err.Error())
+		return c.String(http.StatusInternalServerError, "Error: "+err.Error())
 	}
 	c.Logger().Debugf("Agent: %+v", agent)
 
-	err = c.Render(http.StatusOK, "agent", agent)
+	err = c.Render(http.StatusOK, "agent", AgentPage{
+		Page: Page{
+			PageName: "Agent",
+		},
+		Agent: agent,
+	})
 	if err != nil {
 		c.Logger().Error(err.Error())
 	}

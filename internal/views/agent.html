@@ -1,23 +1,35 @@
 {{template "layout.html" .}}
 
-{{define "title"}}Agent{{end}}
-
 {{define "content"}}
+<div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+	<div class="col d-flex align-items-start">
+		<div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
+			<i class="bi bi-person-badge"></i>
+			<!-- <svg class="bi" width="1em" height="1em">
+				<use xlink:href="#toggles2"></use>
+			</svg> -->
+		</div>
+		<div>
+			<h3 class="fs-2 text-body-emphasis">My Agent</h3>
+			<div>
+				<strong>AccountID:</strong> {{ .Agent.AccountId }}
+			</div>
+			<div>
+				<strong>Symbol:</strong> {{ .Agent.Symbol }}
+			</div>
+			<div>
+				<strong>Headquarters:</strong> <a
+					href="/systems/{{ .Agent.Headquarters.System }}/waypoints/{{ .Agent.Headquarters.Waypoint }}">{{ .Agent.Headquarters.Waypoint }}</a>
+			</div>
+			<div>
+				<strong>Credits:</strong> {{ .Agent.Credits }}
+			</div>
+			<div>
+				<strong>StartingFaction:</strong> {{ .Agent.StartingFaction }}
+			</div>
+		</div>
+	</div>
+</div>
 <div>
-	<div>
-		<strong>AccountID:</strong> {{ .AccountId }}
-	</div>
-	<div>
-		<strong>Symbol:</strong> {{ .Symbol }}
-	</div>
-	<div>
-		<strong>Headquarters:</strong> <a href="/systems/{{ .Headquarters.System }}/waypoints/{{ .Headquarters.Waypoint }}" >{{ .Headquarters.Waypoint }}</a>
-	</div>
-	<div>
-		<strong>Credits:</strong> {{ .Credits }}
-	</div>
-	<div>
-		<strong>StartingFaction:</strong> {{ .StartingFaction }}
-	</div>
 </div>
 {{end}}

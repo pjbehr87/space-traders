@@ -1,0 +1,75 @@
+{{template "layout.html" .}}
+
+{{define "title"}}.PageName{{end}}
+
+{{define "content"}}
+<div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+	{{ range .Waypoints }}
+	<div class="col d-flex align-items-start">
+		<div
+			class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
+			<i class='bi
+				{{ if eq .Type "MOON" }}
+					bi-moon
+				{{ else if eq .Type "ASTEROID_FIELD" }}
+					bi-minecart-loaded
+				{{ else if eq .Type "ORBITAL_STATION" }}
+					bi-shop
+				{{ else if eq .Type "PLANET" }}
+					bi-globe
+				{{ else if eq .Type "GAS_GIANT" }}
+					bi-cloud-fog2
+				{{ else if eq .Type "JUMP_GATE" }}
+					bi-hurricane
+				{{ else }}
+					bi-question-circle
+				{{ end }}'></i>
+		</div>
+		<div>
+			<h3 class="fs-2 text-body-emphasis">{{ .Symbol }}</h3>
+			<div>
+				<strong>Type:</strong> {{ .Type }}
+			</div>
+			<div>
+				<strong>SystemSymbol:</strong> {{ .SystemSymbol }}
+			</div>
+			<div>
+				<strong>X:</strong> {{ .X }}
+			</div>
+			<div>
+				<strong>Y:</strong> {{ .Y }}
+			</div>
+			<div>
+				<strong>Orbitals:</strong>
+				{{ if .Orbitals }}
+					<div>
+						<ul>
+							{{ range .Orbitals }}
+							<li>
+								{{ .Symbol }}
+							</li>
+							{{ end }}
+						</ul>
+					</div>
+				{{ else }}
+					None
+				{{ end }}
+			</div>
+			<div>
+				<strong>Faction:</strong> {{ .Faction.Symbol }}
+			</div>
+			<div>
+				<strong>Traits:</strong> 
+				<ul>
+					{{ range .Traits }}
+					<li>
+						{{ .Symbol }} - {{ .Description }}
+					</li>
+					{{ end }}
+				</ul>
+			</div>
+		</div>
+	</div>
+	{{ end }}
+</div>
+{{end}}

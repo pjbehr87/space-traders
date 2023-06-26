@@ -43,6 +43,7 @@ func main() {
 	e.Renderer = t
 
 	e.Logger.SetLevel(log.DEBUG)
+	e.Logger.Info("Hosting static files: " + e.Static("/public", "internal/static").Path)
 
 	conf := internal.GetConf()
 
