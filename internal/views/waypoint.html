@@ -40,15 +40,13 @@
 			<div>
 				<strong>Orbitals:</strong>
 				{{ if .Orbitals }}
-					<div>
-						<ul>
-							{{ range .Orbitals }}
-							<li>
-								{{ .Symbol.Waypoint }}
-							</li>
-							{{ end }}
-						</ul>
-					</div>
+					<ul>
+						{{ range .Orbitals }}
+						<li>
+							{{ .Symbol.Waypoint }}
+						</li>
+						{{ end }}
+					</ul>
 				{{ else }}
 					None
 				{{ end }}
@@ -69,6 +67,7 @@
 			</div>
 			<div>
 				<strong>Traits:</strong> 
+				{{ if .Traits }}
 				<ul>
 					{{ range .Traits }}
 					<li>
@@ -76,6 +75,9 @@
 					</li>
 					{{ end }}
 				</ul>
+				{{ else }}
+				None
+				{{ end }}
 			</div>
 		</div>
 	</div>
