@@ -44,8 +44,11 @@ type WaypointJson struct {
 	Chart        ChartJson
 }
 
-type WaypointData struct {
+type WaypointsData struct {
 	Waypoints []WaypointJson `json:"data"`
+}
+type WaypointData struct {
+	Waypoint WaypointJson `json:"data"`
 }
 
 type WaypointSymbol struct {
@@ -55,7 +58,7 @@ type WaypointSymbol struct {
 }
 
 type WaypointShort struct {
-	Symbol string
+	Symbol *WaypointSymbol
 	Type   string
 	X      int64
 	Y      int64
@@ -92,20 +95,62 @@ func getWps(wp string) *WaypointSymbol {
 	}
 }
 
-func (stl *StLib) GetWaypoint(system string, waypoint string) ([]Waypoint, error) {
+func (stl *StLib) GetWaypoint(system string, waypoint string) (Waypoint, error) {
 	resp, err := stl.GetUrl(fmt.Sprintf("systems/%s/waypoints/%s", system, waypoint))
 	if err != nil {
-		return []Waypoint{}, err
+		return Waypoint{}, err
 	}
 
 	waypointData := WaypointData{}
 	err = json.Unmarshal(resp, &waypointData)
 	if err != nil {
+		return Waypoint{}, err
+	}
+
+	wpj := waypointData.Waypoint
+	wpjos := []Orbital{}
+	for _, wpdo := range wpj.Orbitals {
+		wpjos = append(wpjos, Orbital{
+			Symbol: getWps(wpdo.Symbol),
+		})
+	}
+
+	chartSubOn, err := time.Parse("2006-01-02T15:04:05Z07:00", wpj.Chart.SubmittedOn)
+	if err != nil {
+		return Waypoint{}, err
+	}
+
+	return Waypoint{
+		Symbol:   getWps(wpj.Symbol),
+		Type:     wpj.Type,
+		X:        wpj.X,
+		Y:        wpj.Y,
+		Orbitals: wpjos,
+		Faction: FactionShort{
+			Symbol: wpj.Faction.Symbol,
+		},
+		Traits: wpj.Traits,
+		Chart: &Chart{
+			WaypointSymbol: getWps(wpj.Chart.WaypointSymbol),
+			SubmittedBy:    wpj.Chart.SubmittedBy,
+			SubmittedOn:    chartSubOn,
+		},
+	}, nil
+}
+func (stl *StLib) ListWaypoints(system string) ([]Waypoint, error) {
+	resp, err := stl.GetUrl(fmt.Sprintf("systems/%s/waypoints", system))
+	if err != nil {
+		return []Waypoint{}, err
+	}
+
+	waypointsData := WaypointsData{}
+	err = json.Unmarshal(resp, &waypointsData)
+	if err != nil {
 		return []Waypoint{}, err
 	}
 
 	waypoints := []Waypoint{}
-	for _, wpd := range waypointData.Waypoints {
+	for _, wpd := range waypointsData.Waypoints {
 		wpdos := []Orbital{}
 		for _, wpdo := range wpd.Orbitals {
 			wpdos = append(wpdos, Orbital{
