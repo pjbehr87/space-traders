@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 )
 
 type System struct {
@@ -21,19 +22,30 @@ type SystemData struct {
 }
 
 type Waypoint struct {
+	Symbol   *WaypointSymbol
+	Type     string
+	X        int64
+	Y        int64
+	Orbitals []Orbital
+	Faction  FactionShort
+	Traits   []Trait
+	Chart    *Chart
+}
+
+type WaypointJson struct {
 	Symbol       string
 	Type         string
 	SystemSymbol string
 	X            int64
 	Y            int64
-	Orbitals     []Orbital
+	Orbitals     []OrbitalJson
 	Faction      FactionShort
 	Traits       []Trait
-	Chart        Chart
+	Chart        ChartJson
 }
 
 type WaypointData struct {
-	Waypoint []Waypoint `json:"data"`
+	Waypoints []WaypointJson `json:"data"`
 }
 
 type WaypointSymbol struct {
@@ -50,19 +62,30 @@ type WaypointShort struct {
 }
 
 type Orbital struct {
+	Symbol *WaypointSymbol
+}
+type OrbitalJson struct {
 	Symbol string
 }
 
-type Chart struct {
+type ChartJson struct {
 	WaypointSymbol string
 	SubmittedBy    string
 	SubmittedOn    string
 }
+type Chart struct {
+	WaypointSymbol *WaypointSymbol
+	SubmittedBy    string
+	SubmittedOn    time.Time
+}
 
-func getWps(wp string) WaypointSymbol {
+func getWps(wp string) *WaypointSymbol {
+	if wp == "" {
+		return nil
+	}
 	wps := strings.Split(wp, "-")
 
-	return WaypointSymbol{
+	return &WaypointSymbol{
 		Sector:   wps[0],
 		System:   wps[0] + "-" + wps[1],
 		Waypoint: wp,
@@ -76,12 +99,43 @@ func (stl *StLib) GetWaypoint(system string, waypoint string) ([]Waypoint, error
 	}
 
 	waypointData := WaypointData{}
-	fmt.Printf("%s", resp)
 	err = json.Unmarshal(resp, &waypointData)
 	if err != nil {
 		return []Waypoint{}, err
 	}
-	fmt.Printf("%+v", waypointData)
 
-	return waypointData.Waypoint, nil
+	waypoints := []Waypoint{}
+	for _, wpd := range waypointData.Waypoints {
+		wpdos := []Orbital{}
+		for _, wpdo := range wpd.Orbitals {
+			wpdos = append(wpdos, Orbital{
+				Symbol: getWps(wpdo.Symbol),
+			})
+		}
+
+		chartSubOn, err := time.Parse("2006-01-02T15:04:05Z07:00", wpd.Chart.SubmittedOn)
+		if err != nil {
+			return []Waypoint{}, err
+		}
+
+		wp := Waypoint{
+			Symbol:   getWps(wpd.Symbol),
+			Type:     wpd.Type,
+			X:        wpd.X,
+			Y:        wpd.Y,
+			Orbitals: wpdos,
+			Faction: FactionShort{
+				Symbol: wpd.Faction.Symbol,
+			},
+			Traits: wpd.Traits,
+			Chart: &Chart{
+				WaypointSymbol: getWps(wpd.Chart.WaypointSymbol),
+				SubmittedBy:    wpd.Chart.SubmittedBy,
+				SubmittedOn:    chartSubOn,
+			},
+		}
+
+		waypoints = append(waypoints, wp)
+	}
+	return waypoints, nil
 }

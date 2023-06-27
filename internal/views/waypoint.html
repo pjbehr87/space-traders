@@ -1,7 +1,5 @@
 {{template "layout.html" .}}
 
-{{define "title"}}.PageName{{end}}
-
 {{define "content"}}
 <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
 	{{ range .Waypoints }}
@@ -26,12 +24,12 @@
 				{{ end }}'></i>
 		</div>
 		<div>
-			<h3 class="fs-2 text-body-emphasis">{{ .Symbol }}</h3>
+			<h3 class="fs-2 text-body-emphasis">{{ .Symbol.Waypoint }}</h3>
 			<div>
 				<strong>Type:</strong> {{ .Type }}
 			</div>
 			<div>
-				<strong>SystemSymbol:</strong> {{ .SystemSymbol }}
+				<strong>SystemSymbol:</strong> {{ .Symbol.System }}
 			</div>
 			<div>
 				<strong>X:</strong> {{ .X }}
@@ -46,7 +44,7 @@
 						<ul>
 							{{ range .Orbitals }}
 							<li>
-								{{ .Symbol }}
+								{{ .Symbol.Waypoint }}
 							</li>
 							{{ end }}
 						</ul>
@@ -59,11 +57,22 @@
 				<strong>Faction:</strong> {{ .Faction.Symbol }}
 			</div>
 			<div>
+				<strong>Chart:</strong>
+				<div class="ms-4">
+					<div>
+						<strong>SubmittedBy:</strong> {{ .Chart.SubmittedBy }}
+					</div>
+					<div>
+						<strong>SubmittedOn:</strong> {{ .Chart.SubmittedOn }}
+					</div>
+				</div>
+			</div>
+			<div>
 				<strong>Traits:</strong> 
 				<ul>
 					{{ range .Traits }}
 					<li>
-						{{ .Symbol }} - {{ .Description }}
+						<span class="link-dark" data-toggle="tooltip" title="{{ .Description }}">{{ .Symbol }}</span>
 					</li>
 					{{ end }}
 				</ul>
