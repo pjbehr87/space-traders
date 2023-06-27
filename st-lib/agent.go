@@ -14,7 +14,7 @@ type AgentJson struct {
 type Agent struct {
 	AccountId       string `json:"accountId"`
 	Symbol          string
-	Headquarters    WaypointSymbol
+	Headquarters    *WaypointSymbol
 	Credits         int64
 	StartingFaction string `json:"startingFaction"`
 }
@@ -35,13 +35,11 @@ func (stl *StLib) MyAgent() (Agent, error) {
 		return Agent{}, err
 	}
 
-	agent := Agent{
+	return Agent{
 		AccountId:       agentData.Agent.AccountId,
 		Symbol:          agentData.Agent.Symbol,
 		Headquarters:    getWps(agentData.Agent.Headquarters),
 		Credits:         agentData.Agent.Credits,
 		StartingFaction: agentData.Agent.StartingFaction,
-	}
-
-	return agent, nil
+	}, nil
 }

@@ -15,4 +15,5 @@ func Router(e *echo.Echo, stl stlib.StLib) {
 
 	controller.NewAgentController(e, stl)
 	controller.NewSystemsController(e, stl)
+	controller.NewContractsController(e, stl)
 }
