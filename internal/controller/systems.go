@@ -16,6 +16,11 @@ type waypointsPage struct {
 
 	Waypoints []stlib.Waypoint
 }
+type shipyardPage struct {
+	Page PageData
+
+	Shipyard stlib.Shipyard
+}
 
 func NewSystemsController(e *echo.Echo, stl stlib.StLib) {
 	cont := systemsController{
@@ -25,6 +30,7 @@ func NewSystemsController(e *echo.Echo, stl stlib.StLib) {
 	e.Logger.Debug("Router added: Systems")
 	e.GET("/systems/:systemSymbol/waypoints", cont.listSystemWaypoints)
 	e.GET("/systems/:systemSymbol/waypoints/:waypointSymbol", cont.getSystemWaypoints)
+	e.GET("/systems/:systemSymbol/waypoints/:waypointSymbol/shipyard", cont.getShipyard)
 }
 
 func (ctl *systemsController) listSystemWaypoints(c echo.Context) error {
@@ -64,6 +70,33 @@ func (ctl *systemsController) getSystemWaypoints(c echo.Context) error {
 		},
 		Waypoints: []stlib.Waypoint{waypoint},
 	})
+	if err != nil {
+		c.Logger().Error(err.Error())
+	}
+	return err
+}
+
+func (ctl *systemsController) getShipyard(c echo.Context) error {
+	c.Logger().Info("GET Shipyard")
+	shipyard, err := ctl.stl.GetShipyard(c.Param("systemSymbol"), c.Param("waypointSymbol"))
+	if err != nil {
+		c.Logger().Error(err.Error())
+		return c.String(http.StatusInternalServerError, "Error: "+err.Error())
+	}
+	c.Logger().Debugf("Waypoint: %+v", shipyard)
+
+	err = c.Render(http.StatusOK, "shipyard", shipyardPage{
+		Page: PageData{
+			PageName: "Waypoint",
+		},
+		Shipyard: shipyard,
+	})
+	// err = c.JSONPretty(http.StatusOK, shipyardPage{
+	// 	Page: PageData{
+	// 		PageName: "Waypoint",
+	// 	},
+	// 	Shipyard: shipyard,
+	// }, "\t")
 	if err != nil {
 		c.Logger().Error(err.Error())
 	}

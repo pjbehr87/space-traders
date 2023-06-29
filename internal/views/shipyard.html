@@ -1,0 +1,225 @@
+{{ template "layout.html" . }}
+
+{{ define "content" }}
+{{ with .Shipyard }}
+<div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+	{{ range .Ships }}
+	<div class="col d-flex align-items-start">
+		<div>
+			<h3 class="fs-2 text-body-emphasis">{{ .Name }}</h3>
+			<div>
+				<strong>Type:</strong> {{ .ShipType }}
+			</div>
+			<div>
+				<strong>Description:</strong> {{ .Description }}
+			</div>
+			<div>
+				<strong>Price:</strong> {{ .PurchasePrice }}
+			</div>
+			<div>
+				<strong>Frame:</strong>
+				<div class="ms-4">
+					{{ with .Frame }}
+					<div>
+						<strong>Symbol:</strong> {{ .Symbol }}
+					</div>
+					<div>
+						<strong>Name:</strong> {{ .Name }}
+					</div>
+					<div>
+						<strong>Description:</strong> {{ .Description }}
+					</div>
+					<div>
+						<strong>Condition:</strong> {{ .Condition }}
+					</div>
+					<div>
+						<strong>ModuleSlots:</strong> {{ .ModuleSlots }}
+					</div>
+					<div>
+						<strong>MountingPoints:</strong> {{ .Name }}
+					</div>
+					<div>
+						<strong>FuelCapacity:</strong> {{ .FuelCapacity }}
+					</div>
+					<div>
+						<strong>Requirements:</strong>
+						<div class="ms-4">
+							{{ with .Requirements }}
+							<div>
+								<strong>Power:</strong> {{ .Power }}
+							</div>
+							<div>
+								<strong>Crew:</strong> {{ .Crew }}
+							</div>
+							<div>
+								<strong>Slots:</strong> {{ .Slots }}
+							</div>
+							{{ end }}
+						</div>
+					</div>
+					{{ end }}
+				</div>
+			</div>
+			<div>
+				<strong>Reactor:</strong>
+				<div class="ms-4">
+					{{ with .Reactor }}
+					<div>
+						<strong>Symbol:</strong> {{ .Symbol }}
+					</div>
+					<div>
+						<strong>Name:</strong> {{ .Name }}
+					</div>
+					<div>
+						<strong>Description:</strong> {{ .Description }}
+					</div>
+					<div>
+						<strong>Condition:</strong> {{ .Condition }}
+					</div>
+					<div>
+						<strong>PowerOutput:</strong> {{ .PowerOutput }}
+					</div>
+					<div>
+						<strong>Requirements:</strong>
+						<div class="ms-4">
+							{{ with .Requirements }}
+							<div>
+								<strong>Power:</strong> {{ .Power }}
+							</div>
+							<div>
+								<strong>Crew:</strong> {{ .Crew }}
+							</div>
+							<div>
+								<strong>Slots:</strong> {{ .Slots }}
+							</div>
+							{{ end }}
+						</div>
+					</div>
+					{{ end }}
+				</div>
+			</div>
+			<div>
+				<strong>Engine:</strong>
+				<div class="ms-4">
+					{{ with .Engine }}
+					<div>
+						<strong>Symbol:</strong> {{ .Symbol }}
+					</div>
+					<div>
+						<strong>Name:</strong> {{ .Name }}
+					</div>
+					<div>
+						<strong>Description:</strong> {{ .Description }}
+					</div>
+					<div>
+						<strong>Condition:</strong> {{ .Condition }}
+					</div>
+					<div>
+						<strong>Speed:</strong> {{ .Speed }}
+					</div>
+					<div>
+						<strong>Requirements:</strong>
+						<div class="ms-4">
+							{{ with .Requirements }}
+							<div>
+								<strong>Power:</strong> {{ .Power }}
+							</div>
+							<div>
+								<strong>Crew:</strong> {{ .Crew }}
+							</div>
+							<div>
+								<strong>Slots:</strong> {{ .Slots }}
+							</div>
+							{{ end }}
+						</div>
+					</div>
+					{{ end }}
+				</div>
+			</div>
+			<div>
+				<strong>Modules:</strong>
+				<div class="ms-4">
+					{{ range .Modules }}
+					<div>
+						<strong>Symbol:</strong> {{ .Symbol }}
+					</div>
+					<div>
+						<strong>Name:</strong> {{ .Name }}
+					</div>
+					<div>
+						<strong>Description:</strong> {{ .Description }}
+					</div>
+					<div>
+						<strong>Capacity:</strong> {{ .Capacity }}
+					</div>
+					<div>
+						<strong>Range:</strong> {{ .Range }}
+					</div>
+					<div>
+						<strong>Requirements:</strong>
+						<div class="ms-4">
+							{{ with .Requirements }}
+							<div>
+								<strong>Power:</strong> {{ .Power }}
+							</div>
+							<div>
+								<strong>Crew:</strong> {{ .Crew }}
+							</div>
+							<div>
+								<strong>Slots:</strong> {{ .Slots }}
+							</div>
+							{{ end }}
+						</div>
+					</div>
+					{{ end }}
+				</div>
+			</div>
+			<div>
+				<strong>Mounts:</strong>
+				<div class="ms-4">
+					{{ range .Mounts }}
+					<div>
+						<strong>Symbol:</strong> {{ .Symbol }}
+					</div>
+					<div>
+						<strong>Name:</strong> {{ .Name }}
+					</div>
+					<div>
+						<strong>Description:</strong> {{ .Description }}
+					</div>
+					<div>
+						<strong>Strength:</strong> {{ .Strength }}
+					</div>
+					<div>
+						<strong>Deposits:</strong> 
+						<ul>
+							{{ range .Deposits }}
+								<li>{{ . }}</li>
+							{{ end }}
+						</ul>
+					</div>
+					<div>
+						<strong>Requirements:</strong>
+						<div class="ms-4">
+							{{ with .Requirements }}
+							<div>
+								<strong>Power:</strong> {{ .Power }}
+							</div>
+							<div>
+								<strong>Crew:</strong> {{ .Crew }}
+							</div>
+							<div>
+								<strong>Slots:</strong> {{ .Slots }}
+							</div>
+							{{ end }}
+						</div>
+					</div>
+					{{ end }}
+				</div>
+			</div>
+		</div>
+	</div>
+	{{ end }}
+</div>
+{{ end }}
+{{ end }}
