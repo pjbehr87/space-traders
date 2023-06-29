@@ -36,26 +36,36 @@
 						<strong>ModuleSlots:</strong> {{ .ModuleSlots }}
 					</div>
 					<div>
-						<strong>MountingPoints:</strong> {{ .Name }}
+						<strong>MountingPoints:</strong> {{ .MountingPoints }}
 					</div>
 					<div>
 						<strong>FuelCapacity:</strong> {{ .FuelCapacity }}
 					</div>
 					<div>
 						<strong>Requirements:</strong>
+						{{ with .Requirements }}
+						{{ if eq .Power .Crew .Slots 0 }}
+						None
+						{{ else }}
 						<div class="ms-4">
-							{{ with .Requirements }}
+							{{ if not (eq .Power 0) }}
 							<div>
 								<strong>Power:</strong> {{ .Power }}
 							</div>
+							{{ end }}
+							{{ if not (eq .Crew 0) }}
 							<div>
 								<strong>Crew:</strong> {{ .Crew }}
 							</div>
+							{{ end }}
+							{{ if not (eq .Slots 0) }}
 							<div>
 								<strong>Slots:</strong> {{ .Slots }}
 							</div>
 							{{ end }}
 						</div>
+						{{ end }}
+						{{ end }}
 					</div>
 					{{ end }}
 				</div>
@@ -81,19 +91,29 @@
 					</div>
 					<div>
 						<strong>Requirements:</strong>
+						{{ with .Requirements }}
+						{{ if eq .Power .Crew .Slots 0 }}
+						None
+						{{ else }}
 						<div class="ms-4">
-							{{ with .Requirements }}
+							{{ if not (eq .Power 0) }}
 							<div>
 								<strong>Power:</strong> {{ .Power }}
 							</div>
+							{{ end }}
+							{{ if not (eq .Crew 0) }}
 							<div>
 								<strong>Crew:</strong> {{ .Crew }}
 							</div>
+							{{ end }}
+							{{ if not (eq .Slots 0) }}
 							<div>
 								<strong>Slots:</strong> {{ .Slots }}
 							</div>
 							{{ end }}
 						</div>
+						{{ end }}
+						{{ end }}
 					</div>
 					{{ end }}
 				</div>
@@ -119,25 +139,38 @@
 					</div>
 					<div>
 						<strong>Requirements:</strong>
+						{{ with .Requirements }}
+						{{ if eq .Power .Crew .Slots 0 }}
+						None
+						{{ else }}
 						<div class="ms-4">
-							{{ with .Requirements }}
+							{{ if not (eq .Power 0) }}
 							<div>
 								<strong>Power:</strong> {{ .Power }}
 							</div>
+							{{ end }}
+							{{ if not (eq .Crew 0) }}
 							<div>
 								<strong>Crew:</strong> {{ .Crew }}
 							</div>
+							{{ end }}
+							{{ if not (eq .Slots 0) }}
 							<div>
 								<strong>Slots:</strong> {{ .Slots }}
 							</div>
 							{{ end }}
 						</div>
+						{{ end }}
+						{{ end }}
 					</div>
 					{{ end }}
 				</div>
 			</div>
 			<div>
 				<strong>Modules:</strong>
+				{{ if not .Modules }}
+				None
+				{{ else }}
 				<div class="ms-4">
 					{{ range .Modules }}
 					<div>
@@ -152,30 +185,46 @@
 					<div>
 						<strong>Capacity:</strong> {{ .Capacity }}
 					</div>
+					{{ if not (eq .Range 0)}}
 					<div>
 						<strong>Range:</strong> {{ .Range }}
 					</div>
+					{{ end }}
 					<div>
 						<strong>Requirements:</strong>
+						{{ with .Requirements }}
+						{{ if eq .Power .Crew .Slots 0 }}
+						None
+						{{ else }}
 						<div class="ms-4">
-							{{ with .Requirements }}
+							{{ if not (eq .Power 0) }}
 							<div>
 								<strong>Power:</strong> {{ .Power }}
 							</div>
+							{{ end }}
+							{{ if not (eq .Crew 0) }}
 							<div>
 								<strong>Crew:</strong> {{ .Crew }}
 							</div>
+							{{ end }}
+							{{ if not (eq .Slots 0) }}
 							<div>
 								<strong>Slots:</strong> {{ .Slots }}
 							</div>
 							{{ end }}
 						</div>
+						{{ end }}
+						{{ end }}
 					</div>
 					{{ end }}
 				</div>
+				{{ end }}
 			</div>
 			<div>
 				<strong>Mounts:</strong>
+				{{ if not .Mounts }}
+				None
+				{{ else }}
 				<div class="ms-4">
 					{{ range .Mounts }}
 					<div>
@@ -190,32 +239,45 @@
 					<div>
 						<strong>Strength:</strong> {{ .Strength }}
 					</div>
+					{{ if .Deposits }}
 					<div>
-						<strong>Deposits:</strong> 
+						<strong>Deposits:</strong>
 						<ul>
 							{{ range .Deposits }}
 								<li>{{ . }}</li>
 							{{ end }}
 						</ul>
 					</div>
+					{{ end }}
 					<div>
 						<strong>Requirements:</strong>
+						{{ with .Requirements }}
+						{{ if eq .Power .Crew .Slots 0 }}
+						None
+						{{ else }}
 						<div class="ms-4">
-							{{ with .Requirements }}
+							{{ if not (eq .Power 0) }}
 							<div>
 								<strong>Power:</strong> {{ .Power }}
 							</div>
+							{{ end }}
+							{{ if not (eq .Crew 0) }}
 							<div>
 								<strong>Crew:</strong> {{ .Crew }}
 							</div>
+							{{ end }}
+							{{ if not (eq .Slots 0) }}
 							<div>
 								<strong>Slots:</strong> {{ .Slots }}
 							</div>
 							{{ end }}
 						</div>
+						{{ end }}
+						{{ end }}
 					</div>
 					{{ end }}
 				</div>
+				{{ end }}
 			</div>
 		</div>
 	</div>
