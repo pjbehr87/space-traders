@@ -1,6 +1,6 @@
-{{template "layout.html" .}}
+{{ template "layout.html" . }}
 
-{{define "content"}}
+{{ define "content" }}
 {{ if .Contracts }}
 <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
 	{{ range .Contracts }}
@@ -84,4 +84,4 @@
 {{ else }}
 <h1>You don't have any contracts. Looser!</h1>
 {{ end }}
-{{end}}
+{{ end }}
