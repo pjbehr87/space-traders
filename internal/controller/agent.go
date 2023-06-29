@@ -7,18 +7,18 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type AgentController struct {
+type agentController struct {
 	stl stlib.StLib
 }
 
-type AgentPage struct {
-	Page
+type agentPage struct {
+	Page PageData
 
 	Agent stlib.Agent
 }
 
 func NewAgentController(e *echo.Echo, stl stlib.StLib) {
-	cont := AgentController{
+	cont := agentController{
 		stl: stl,
 	}
 
@@ -26,7 +26,7 @@ func NewAgentController(e *echo.Echo, stl stlib.StLib) {
 	e.GET("/my/agent", cont.getAgent)
 }
 
-func (ctl *AgentController) getAgent(c echo.Context) error {
+func (ctl *agentController) getAgent(c echo.Context) error {
 	c.Logger().Info("GET Agent")
 	agent, err := ctl.stl.MyAgent()
 	if err != nil {
@@ -35,8 +35,8 @@ func (ctl *AgentController) getAgent(c echo.Context) error {
 	}
 	c.Logger().Debugf("Agent: %+v", agent)
 
-	err = c.Render(http.StatusOK, "agent", AgentPage{
-		Page: Page{
+	err = c.Render(http.StatusOK, "agent", agentPage{
+		Page: PageData{
 			PageName: "Agent",
 		},
 		Agent: agent,

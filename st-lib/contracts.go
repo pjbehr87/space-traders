@@ -26,8 +26,11 @@ type Contract struct {
 	DeadlineToAccept time.Time
 }
 
-type ContractData struct {
+type ContractsData struct {
 	Contracts []ContractJson `json:"data"`
+}
+type ContractData struct {
+	Contract ContractJson `json:"data"`
 }
 
 type TermsJson struct {
@@ -36,9 +39,9 @@ type TermsJson struct {
 	Deliver  []DeliverJson
 }
 type Terms struct {
-	Deadline time.Time
-	Payment  Payment
-	Deliver  []Deliver
+	Deadline   time.Time
+	Payment    Payment
+	Deliveries []Deliver
 }
 
 type Payment struct {
@@ -59,20 +62,28 @@ type Deliver struct {
 	UnitsFulfilled    int64
 }
 
+func (stl *StLib) AcceptContract(contractId string) error {
+	_, err := stl.PostUrl("my/contracts/" + contractId + "/accept")
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (stl *StLib) ListContracts() ([]Contract, error) {
 	resp, err := stl.GetUrl("my/contracts")
 	if err != nil {
 		return []Contract{}, err
 	}
 
-	contractData := ContractData{}
-	err = json.Unmarshal(resp, &contractData)
+	contractsData := ContractsData{}
+	err = json.Unmarshal(resp, &contractsData)
 	if err != nil {
 		return []Contract{}, err
 	}
 
 	contracts := []Contract{}
-	for _, cd := range contractData.Contracts {
+	for _, cd := range contractsData.Contracts {
 		deadlineT, err := time.Parse("2006-01-02T15:04:05Z07:00", cd.Terms.Deadline)
 		if err != nil {
 			return []Contract{}, err
@@ -82,8 +93,8 @@ func (stl *StLib) ListContracts() ([]Contract, error) {
 			deliveries = append(deliveries, Deliver{
 				TradeSymbol:       cdtd.TradeSymbol,
 				DestinationSymbol: getWps(cdtd.DestinationSymbol),
-				UnitsRequired:     cdtd.UnitsFulfilled,
-				UnitsFulfilled:    cdtd.UnitsRequired,
+				UnitsRequired:     cdtd.UnitsRequired,
+				UnitsFulfilled:    cdtd.UnitsFulfilled,
 			})
 		}
 
@@ -105,7 +116,7 @@ func (stl *StLib) ListContracts() ([]Contract, error) {
 					OnAccepted:  cd.Terms.Payment.OnAccepted,
 					OnFulfilled: cd.Terms.Payment.OnFulfilled,
 				},
-				Deliver: deliveries,
+				Deliveries: deliveries,
 			},
 			Accepted:         cd.Accepted,
 			Fulfilled:        cd.Fulfilled,
@@ -116,4 +127,59 @@ func (stl *StLib) ListContracts() ([]Contract, error) {
 		contracts = append(contracts, c)
 	}
 	return contracts, nil
+}
+
+func (stl *StLib) GetContract(contractId string) (Contract, error) {
+	resp, err := stl.GetUrl("my/contracts/" + contractId)
+	if err != nil {
+		return Contract{}, err
+	}
+
+	contractData := ContractData{}
+	err = json.Unmarshal(resp, &contractData)
+	if err != nil {
+		return Contract{}, err
+	}
+
+	cj := contractData.Contract
+	deadlineT, err := time.Parse("2006-01-02T15:04:05Z07:00", cj.Terms.Deadline)
+	if err != nil {
+		return Contract{}, err
+	}
+	deliveries := []Deliver{}
+	for _, cjtd := range cj.Terms.Deliver {
+		deliveries = append(deliveries, Deliver{
+			TradeSymbol:       cjtd.TradeSymbol,
+			DestinationSymbol: getWps(cjtd.DestinationSymbol),
+			UnitsRequired:     cjtd.UnitsRequired,
+			UnitsFulfilled:    cjtd.UnitsFulfilled,
+		})
+	}
+
+	expirationT, err := time.Parse("2006-01-02T15:04:05Z07:00", cj.Expiration)
+	if err != nil {
+		return Contract{}, err
+	}
+	deadlineToAcceptT, err := time.Parse("2006-01-02T15:04:05Z07:00", cj.DeadlineToAccept)
+	if err != nil {
+		return Contract{}, err
+	}
+
+	return Contract{
+		Id:            cj.Id,
+		FactionSymbol: cj.FactionSymbol,
+		Type:          cj.Type,
+		Terms: Terms{
+			Deadline: deadlineT,
+			Payment: Payment{
+				OnAccepted:  cj.Terms.Payment.OnAccepted,
+				OnFulfilled: cj.Terms.Payment.OnFulfilled,
+			},
+			Deliveries: deliveries,
+		},
+		Accepted:         cj.Accepted,
+		Fulfilled:        cj.Fulfilled,
+		Expiration:       expirationT,
+		DeadlineToAccept: deadlineToAcceptT,
+	}, nil
 }

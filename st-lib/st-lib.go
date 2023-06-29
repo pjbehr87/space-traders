@@ -38,3 +38,24 @@ func (st *StLib) GetUrl(url string) ([]byte, error) {
 
 	return body, nil
 }
+func (st *StLib) PostUrl(url string) ([]byte, error) {
+	req, err := http.NewRequest("POST", st.root+url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", st.token))
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
+}

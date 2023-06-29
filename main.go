@@ -6,8 +6,10 @@ import (
 	"html/template"
 	"io"
 	"space-traders/internal"
+	"space-traders/internal/controller"
 	stlib "space-traders/st-lib"
 	"strings"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
@@ -21,7 +23,22 @@ type Template struct {
 }
 
 func NewTemplate() *Template {
-	templates := template.Must(template.New("").ParseFS(tmplFS, "internal/views/*.html"))
+	funcMap := template.FuncMap{
+		"timeFmt": func(date time.Time) string {
+			localTz, err := time.LoadLocation("Local")
+			if err != nil {
+				return "bad date: " + err.Error()
+			}
+			dateLocal := date.In(localTz)
+			return dateLocal.Format("2006-01-02 3:4:5 pm")
+		},
+		"timeUntil": func(date time.Time) string {
+			timeUntil := time.Until(date)
+
+			return timeUntil.Round(time.Second).String()
+		},
+	}
+	templates := template.Must(template.New("").Funcs(funcMap).ParseFS(tmplFS, "internal/views/*.html"))
 	return &Template{
 		templates: templates,
 	}
@@ -39,11 +56,7 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Con
 func main() {
 	e := echo.New()
 
-	t := NewTemplate()
-	e.Renderer = t
-
 	e.Logger.SetLevel(log.DEBUG)
-	e.Logger.Info("Hosting static files: " + e.Static("/public", "internal/static").Path)
 
 	conf := internal.GetConf()
 
@@ -62,8 +75,12 @@ func main() {
 	e.Logger.SetLevel(logLevel)
 	e.Logger.Info(fmt.Sprintf("LogLevel set to: %s", conf.Server.LogLevel))
 
+	t := NewTemplate()
+	e.Renderer = t
+
+	e.Logger.Info("Hosting static files: " + e.Static("/public", "internal/static").Path)
 	stl := stlib.NewStLib(conf.Agent.Token)
 
-	internal.Router(e, stl)
+	controller.InitRouter(e, stl)
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", conf.Server.Port)))
 }

@@ -6,7 +6,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type conf struct {
+type Conf struct {
 	Agent struct {
 		Token string
 		Name  string
@@ -17,13 +17,13 @@ type conf struct {
 	}
 }
 
-func GetConf() conf {
+func GetConf() Conf {
 	confFile, err := os.ReadFile("config/conf.yaml")
 	if err != nil {
 		panic("Read Config File: " + err.Error())
 	}
 
-	var c conf
+	var c Conf
 	if err = yaml.Unmarshal(confFile, &c); err != nil {
 		panic("Unmarshal: " + err.Error())
 	}
