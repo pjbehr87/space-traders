@@ -7,10 +7,22 @@
 	<div class="col d-flex align-items-start">
 		<div
 			class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
-			<i class='bi bi-file-earmark-text'></i>
+			<i class='bi
+				{{ if eq .Type "PROCUREMENT" }}
+					bi-file-earmark-arrow-down
+				{{ else }}
+					bi-file-earmark-text
+				{{ end }}'></i>
 		</div>
 		<div>
 			<h3 class="fs-2 text-body-emphasis">{{ .Id }}</h3>
+			<div>
+				{{ if .Accepted }}
+				<h3 class="text-success">Accepted</h3>
+				{{ else }}
+				<h3 class="text-danger">Not Accepted</h3>
+				{{ end }}
+			</div>
 			<div>
 				<strong>Faction:</strong> {{ .FactionSymbol }}
 			</div>
@@ -18,17 +30,53 @@
 				<strong>Type:</strong> {{ .Type }}
 			</div>
 			<div>
-				<strong>Terms:</strong> {{ .Terms }}
+				<strong>Terms:</strong>
+				<div class="ms-4">
+					<div>
+						<strong>Deadline:</strong> {{ timeFmt .Terms.Deadline }} ({{ timeUntil .Terms.Deadline }})
+					</div>
+					<div>
+						<strong>Payment:</strong>
+						<div class="ms-4">
+							<div>
+								<strong>OnAccepted:</strong> {{ .Terms.Payment.OnAccepted }}
+							</div>
+							<div>
+								<strong>OnFulfilled:</strong> {{ .Terms.Payment.OnFulfilled }}
+							</div>
+						</div>
+					</div>
+					<div>
+						<strong>Deliveries:</strong>
+						<div class="ms-4">
+							{{ range .Terms.Deliveries }}
+							<div>
+								<strong>TradeSymbol:</strong> {{ .TradeSymbol }}
+							</div>
+							<div>
+								<strong>Destination:</strong> <a href="/systems/{{ .DestinationSymbol.System }}/waypoints/{{ .DestinationSymbol.Waypoint }}">{{ .DestinationSymbol.Waypoint }}</a>
+							</div>
+							<div>
+								<strong>UnitsRequired:</strong> {{ .UnitsRequired }}
+							</div>
+							<div>
+								<strong>UnitsFulfilled:</strong> {{ .UnitsFulfilled }}
+							</div>
+							{{ end }}
+						</div>
+					</div>
+				</div>
 			</div>
 			<div>
-				<strong>Accepted:</strong> {{ .Accepted }}
+				<strong>Expiration:</strong> {{ timeFmt .Expiration }} ({{ timeUntil .Expiration }})
 			</div>
 			<div>
-				<strong>Expiration:</strong> {{ .Expiration }}
+				<strong>DeadlineToAccept:</strong> {{ timeFmt .DeadlineToAccept }} ({{ timeUntil .DeadlineToAccept }})
 			</div>
-			<div>
-				<strong>DeadlineToAccept:</strong> {{ .DeadlineToAccept }}
-			</div>
+
+			{{ if not .Accepted }}
+			<button class="btn btn-primary accept-contract" data-contract-id="{{ .Id }}">Accept</button>
+			{{ end }}
 		</div>
 	</div>
 	{{ end }}

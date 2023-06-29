@@ -7,23 +7,18 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type SystemsController struct {
+type systemsController struct {
 	stl stlib.StLib
 }
 
-type WaypointsPage struct {
-	Page
+type waypointsPage struct {
+	Page PageData
 
 	Waypoints []stlib.Waypoint
 }
-type WaypointPage struct {
-	Page
-
-	Waypoint stlib.Waypoint
-}
 
 func NewSystemsController(e *echo.Echo, stl stlib.StLib) {
-	cont := SystemsController{
+	cont := systemsController{
 		stl: stl,
 	}
 
@@ -32,7 +27,7 @@ func NewSystemsController(e *echo.Echo, stl stlib.StLib) {
 	e.GET("/systems/:systemSymbol/waypoints/:waypointSymbol", cont.getSystemWaypoints)
 }
 
-func (ctl *SystemsController) listSystemWaypoints(c echo.Context) error {
+func (ctl *systemsController) listSystemWaypoints(c echo.Context) error {
 	c.Logger().Info("LIST Waypoints")
 	waypoints, err := ctl.stl.ListWaypoints(c.Param("systemSymbol"))
 	if err != nil {
@@ -41,8 +36,8 @@ func (ctl *SystemsController) listSystemWaypoints(c echo.Context) error {
 	}
 	c.Logger().Debugf("Waypoints: %+v", waypoints)
 
-	err = c.Render(http.StatusOK, "waypoints", WaypointsPage{
-		Page: Page{
+	err = c.Render(http.StatusOK, "waypoints", waypointsPage{
+		Page: PageData{
 			PageName: "Waypoints",
 		},
 		Waypoints: waypoints,
@@ -53,7 +48,7 @@ func (ctl *SystemsController) listSystemWaypoints(c echo.Context) error {
 	return err
 }
 
-func (ctl *SystemsController) getSystemWaypoints(c echo.Context) error {
+func (ctl *systemsController) getSystemWaypoints(c echo.Context) error {
 	c.Logger().Info("GET Waypoint")
 	waypoint, err := ctl.stl.GetWaypoint(c.Param("systemSymbol"), c.Param("waypointSymbol"))
 	if err != nil {
@@ -63,8 +58,8 @@ func (ctl *SystemsController) getSystemWaypoints(c echo.Context) error {
 	c.Logger().Debugf("Waypoint: %+v", waypoint)
 
 	// We can share the get waypoint and list waypoints page. Just pass as single-item slice
-	err = c.Render(http.StatusOK, "waypoints", WaypointsPage{
-		Page: Page{
+	err = c.Render(http.StatusOK, "waypoints", waypointsPage{
+		Page: PageData{
 			PageName: "Waypoint",
 		},
 		Waypoints: []stlib.Waypoint{waypoint},
