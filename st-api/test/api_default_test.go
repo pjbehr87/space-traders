@@ -11,10 +11,11 @@ package stapi
 
 import (
 	"context"
+	"testing"
+
+	openapiclient "github.com/pjbehr87/space-traders/st-api"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"testing"
-	openapiclient "github.com/pjbehr87/space-traders/stapi"
 )
 
 func Test_stapi_DefaultApiService(t *testing.T) {
@@ -24,7 +25,7 @@ func Test_stapi_DefaultApiService(t *testing.T) {
 
 	t.Run("Test DefaultApiService GetStatus", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		resp, httpRes, err := apiClient.DefaultApi.GetStatus(context.Background()).Execute()
 
@@ -36,7 +37,7 @@ func Test_stapi_DefaultApiService(t *testing.T) {
 
 	t.Run("Test DefaultApiService Register", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		resp, httpRes, err := apiClient.DefaultApi.Register(context.Background()).Execute()
 

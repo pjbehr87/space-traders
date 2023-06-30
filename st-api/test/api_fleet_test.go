@@ -11,10 +11,11 @@ package stapi
 
 import (
 	"context"
+	"testing"
+
+	openapiclient "github.com/pjbehr87/space-traders/st-api"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"testing"
-	openapiclient "github.com/pjbehr87/space-traders/stapi"
 )
 
 func Test_stapi_FleetApiService(t *testing.T) {
@@ -24,7 +25,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService CreateChart", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -38,7 +39,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService CreateShipShipScan", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -52,7 +53,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService CreateShipSystemScan", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -66,7 +67,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService CreateShipWaypointScan", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -80,7 +81,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService CreateSurvey", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -94,7 +95,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService DockShip", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -108,7 +109,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService ExtractResources", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -122,7 +123,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService GetMounts", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -136,7 +137,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService GetMyShip", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -150,7 +151,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService GetMyShipCargo", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -164,7 +165,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService GetMyShips", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		resp, httpRes, err := apiClient.FleetApi.GetMyShips(context.Background()).Execute()
 
@@ -176,7 +177,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService GetShipCooldown", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -190,7 +191,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService GetShipNav", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -204,7 +205,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService InstallMount", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -218,7 +219,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService Jettison", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -232,7 +233,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService JumpShip", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -246,7 +247,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService NavigateShip", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -260,7 +261,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService NegotiateContract", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -274,7 +275,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService OrbitShip", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -288,7 +289,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService PatchShipNav", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -302,7 +303,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService PurchaseCargo", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -316,7 +317,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService PurchaseShip", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		resp, httpRes, err := apiClient.FleetApi.PurchaseShip(context.Background()).Execute()
 
@@ -328,7 +329,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService RefuelShip", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -342,7 +343,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService RemoveMount", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -356,7 +357,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService SellCargo", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -370,7 +371,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService ShipRefine", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -384,7 +385,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService TransferCargo", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 
@@ -398,7 +399,7 @@ func Test_stapi_FleetApiService(t *testing.T) {
 
 	t.Run("Test FleetApiService WarpShip", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var shipSymbol string
 

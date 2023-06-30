@@ -11,10 +11,11 @@ package stapi
 
 import (
 	"context"
+	"testing"
+
+	openapiclient "github.com/pjbehr87/space-traders/st-api"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"testing"
-	openapiclient "github.com/pjbehr87/space-traders/stapi"
 )
 
 func Test_stapi_SystemsApiService(t *testing.T) {
@@ -24,7 +25,7 @@ func Test_stapi_SystemsApiService(t *testing.T) {
 
 	t.Run("Test SystemsApiService GetJumpGate", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var systemSymbol string
 		var waypointSymbol string
@@ -39,7 +40,7 @@ func Test_stapi_SystemsApiService(t *testing.T) {
 
 	t.Run("Test SystemsApiService GetMarket", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var systemSymbol string
 		var waypointSymbol string
@@ -54,7 +55,7 @@ func Test_stapi_SystemsApiService(t *testing.T) {
 
 	t.Run("Test SystemsApiService GetShipyard", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var systemSymbol string
 		var waypointSymbol string
@@ -69,7 +70,7 @@ func Test_stapi_SystemsApiService(t *testing.T) {
 
 	t.Run("Test SystemsApiService GetSystem", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var systemSymbol string
 
@@ -83,7 +84,7 @@ func Test_stapi_SystemsApiService(t *testing.T) {
 
 	t.Run("Test SystemsApiService GetSystemWaypoints", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var systemSymbol string
 
@@ -97,7 +98,7 @@ func Test_stapi_SystemsApiService(t *testing.T) {
 
 	t.Run("Test SystemsApiService GetSystems", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		resp, httpRes, err := apiClient.SystemsApi.GetSystems(context.Background()).Execute()
 
@@ -109,7 +110,7 @@ func Test_stapi_SystemsApiService(t *testing.T) {
 
 	t.Run("Test SystemsApiService GetWaypoint", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var systemSymbol string
 		var waypointSymbol string

@@ -1,3 +1,30 @@
+{{ define "shipRequirements" }}
+<strong>Requirements:</strong>
+{{ with .Requirements }}
+{{ if or .Power .Crew .Slots }}
+<div class="ms-4">
+	{{ if .Power }}
+	<div>
+		<strong>Power:</strong> {{ .Power }}
+	</div>
+	{{ end }}
+	{{ if .Crew }}
+	<div>
+		<strong>Crew:</strong> {{ .Crew }}
+	</div>
+	{{ end }}
+	{{ if .Slots }}
+	<div>
+		<strong>Slots:</strong> {{ .Slots }}
+	</div>
+	{{ end }}
+</div>
+{{ else }}
+None
+{{ end }}
+{{ end }}
+{{ end }}
+
 {{ define "shipRegistration" }}
 <strong>Registration:</strong>
 <div class="ms-4">
@@ -64,7 +91,7 @@
 <strong>Nav:</strong>
 <div class="ms-4">
 	<div>
-		<strong>CurrentLocation:</strong> {{ .WaypointSymbol.Waypoint }}
+		<strong>CurrentLocation:</strong> {{ .WaypointSymbol }}
 	</div>
 	<strong>Route:</strong>
 	<div class="ms-4">
@@ -73,7 +100,7 @@
 		<div class="ms-4">
 			{{ with .Destination }}
 			<div>
-				<strong>Location:</strong> {{ .Symbol.Waypoint }}
+				<strong>Location:</strong> {{ .Symbol }}
 			</div>
 			<div>
 				<strong>Type:</strong> {{ .Type }}
@@ -90,7 +117,7 @@
 		<div class="ms-4">
 			{{ with .Departure }}
 			<div>
-				<strong>Location:</strong> {{ .Symbol.Waypoint }}
+				<strong>Location:</strong> {{ .Symbol }}
 			</div>
 			<div>
 				<strong>Type:</strong> {{ .Type }}
@@ -145,30 +172,7 @@
 		<strong>FuelCapacity:</strong> {{ .FuelCapacity }}
 	</div>
 	<div>
-		<strong>Requirements:</strong>
-		{{ with .Requirements }}
-		{{ if eq .Power .Crew .Slots 0 }}
-		None
-		{{ else }}
-		<div class="ms-4">
-			{{ if not (eq .Power 0) }}
-			<div>
-				<strong>Power:</strong> {{ .Power }}
-			</div>
-			{{ end }}
-			{{ if not (eq .Crew 0) }}
-			<div>
-				<strong>Crew:</strong> {{ .Crew }}
-			</div>
-			{{ end }}
-			{{ if not (eq .Slots 0) }}
-			<div>
-				<strong>Slots:</strong> {{ .Slots }}
-			</div>
-			{{ end }}
-		</div>
-		{{ end }}
-		{{ end }}
+		{{ template "shipRequirements" . }}
 	</div>
 </div>
 {{ end }}
@@ -192,30 +196,7 @@
 		<strong>PowerOutput:</strong> {{ .PowerOutput }}
 	</div>
 	<div>
-		<strong>Requirements:</strong>
-		{{ with .Requirements }}
-		{{ if eq .Power .Crew .Slots 0 }}
-		None
-		{{ else }}
-		<div class="ms-4">
-			{{ if not (eq .Power 0) }}
-			<div>
-				<strong>Power:</strong> {{ .Power }}
-			</div>
-			{{ end }}
-			{{ if not (eq .Crew 0) }}
-			<div>
-				<strong>Crew:</strong> {{ .Crew }}
-			</div>
-			{{ end }}
-			{{ if not (eq .Slots 0) }}
-			<div>
-				<strong>Slots:</strong> {{ .Slots }}
-			</div>
-			{{ end }}
-		</div>
-		{{ end }}
-		{{ end }}
+		{{ template "shipRequirements" . }}
 	</div>
 </div>
 {{ end }}
@@ -239,30 +220,7 @@
 		<strong>Speed:</strong> {{ .Speed }}
 	</div>
 	<div>
-		<strong>Requirements:</strong>
-		{{ with .Requirements }}
-		{{ if eq .Power .Crew .Slots 0 }}
-		None
-		{{ else }}
-		<div class="ms-4">
-			{{ if not (eq .Power 0) }}
-			<div>
-				<strong>Power:</strong> {{ .Power }}
-			</div>
-			{{ end }}
-			{{ if not (eq .Crew 0) }}
-			<div>
-				<strong>Crew:</strong> {{ .Crew }}
-			</div>
-			{{ end }}
-			{{ if not (eq .Slots 0) }}
-			<div>
-				<strong>Slots:</strong> {{ .Slots }}
-			</div>
-			{{ end }}
-		</div>
-		{{ end }}
-		{{ end }}
+		{{ template "shipRequirements" . }}
 	</div>
 </div>
 {{ end }}
@@ -283,39 +241,18 @@ None
 	<div>
 		<strong>Description:</strong> {{ .Description }}
 	</div>
+	{{ if .Capacity }}
 	<div>
 		<strong>Capacity:</strong> {{ .Capacity }}
 	</div>
-	{{ if not (eq .Range 0)}}
+	{{ end }}
+	{{ if .Range }}
 	<div>
 		<strong>Range:</strong> {{ .Range }}
 	</div>
 	{{ end }}
 	<div>
-		<strong>Requirements:</strong>
-		{{ with .Requirements }}
-		{{ if eq .Power .Crew .Slots 0 }}
-		None
-		{{ else }}
-		<div class="ms-4">
-			{{ if not (eq .Power 0) }}
-			<div>
-				<strong>Power:</strong> {{ .Power }}
-			</div>
-			{{ end }}
-			{{ if not (eq .Crew 0) }}
-			<div>
-				<strong>Crew:</strong> {{ .Crew }}
-			</div>
-			{{ end }}
-			{{ if not (eq .Slots 0) }}
-			<div>
-				<strong>Slots:</strong> {{ .Slots }}
-			</div>
-			{{ end }}
-		</div>
-		{{ end }}
-		{{ end }}
+		{{ template "shipRequirements" . }}
 	</div>
 	{{ end }}
 </div>
@@ -352,30 +289,7 @@ None
 	</div>
 	{{ end }}
 	<div>
-		<strong>Requirements:</strong>
-		{{ with .Requirements }}
-		{{ if eq .Power .Crew .Slots 0 }}
-		None
-		{{ else }}
-		<div class="ms-4">
-			{{ if not (eq .Power 0) }}
-			<div>
-				<strong>Power:</strong> {{ .Power }}
-			</div>
-			{{ end }}
-			{{ if not (eq .Crew 0) }}
-			<div>
-				<strong>Crew:</strong> {{ .Crew }}
-			</div>
-			{{ end }}
-			{{ if not (eq .Slots 0) }}
-			<div>
-				<strong>Slots:</strong> {{ .Slots }}
-			</div>
-			{{ end }}
-		</div>
-		{{ end }}
-		{{ end }}
+		{{ template "shipRequirements" . }}
 	</div>
 	{{ end }}
 </div>

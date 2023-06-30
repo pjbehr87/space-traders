@@ -11,10 +11,11 @@ package stapi
 
 import (
 	"context"
+	"testing"
+
+	openapiclient "github.com/pjbehr87/space-traders/st-api"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"testing"
-	openapiclient "github.com/pjbehr87/space-traders/stapi"
 )
 
 func Test_stapi_FactionsApiService(t *testing.T) {
@@ -24,7 +25,7 @@ func Test_stapi_FactionsApiService(t *testing.T) {
 
 	t.Run("Test FactionsApiService GetFaction", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		var factionSymbol string
 
@@ -38,7 +39,7 @@ func Test_stapi_FactionsApiService(t *testing.T) {
 
 	t.Run("Test FactionsApiService GetFactions", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		resp, httpRes, err := apiClient.FactionsApi.GetFactions(context.Background()).Execute()
 

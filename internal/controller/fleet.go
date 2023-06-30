@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	stapi "github.com/pjbehr87/space-traders/st-api"
 	stlib "github.com/pjbehr87/space-traders/st-lib"
 
 	"github.com/labstack/echo/v4"
@@ -11,23 +12,25 @@ import (
 
 type fleetController struct {
 	stl stlib.StLib
+	sta *stapi.APIClient
 }
 
 type shipsPage struct {
 	Page PageData
 
-	Ships []stlib.Ship
+	Ships []stapi.Ship
 }
 type shipPage struct {
 	Page PageData
 
-	Ship      stlib.Ship
-	Waypoints []stlib.Waypoint
+	Ship      stapi.Ship
+	Waypoints []stapi.Waypoint
 }
 
-func NewFleetController(e *echo.Echo, stl stlib.StLib) {
+func NewFleetController(e *echo.Echo, stl stlib.StLib, sta *stapi.APIClient) {
 	cont := fleetController{
 		stl: stl,
+		sta: sta,
 	}
 
 	e.Logger.Debug("Router added: Fleet")
@@ -84,18 +87,19 @@ func (ctl *fleetController) dockShip(c echo.Context) error {
 
 func (ctl *fleetController) listShips(c echo.Context) error {
 	c.Logger().Info("Request: LIST Ships")
-	ships, err := ctl.stl.ListShips()
+
+	myShips, _, err := ctl.sta.FleetApi.GetMyShips(c.Request().Context()).Execute()
 	if err != nil {
 		c.Logger().Error(err.Error())
 		return c.String(http.StatusInternalServerError, "Error: "+err.Error())
 	}
-	c.Logger().Debugf("Resp: Ships\n%+v", ships)
+	c.Logger().Debugf("Resp: Ships\n%+v", myShips.Data)
 
 	err = c.Render(http.StatusOK, "myShips", shipsPage{
 		Page: PageData{
 			PageName: "Ships",
 		},
-		Ships: ships,
+		Ships: myShips.Data,
 	})
 	if err != nil {
 		c.Logger().Error(err.Error())
@@ -103,20 +107,24 @@ func (ctl *fleetController) listShips(c echo.Context) error {
 	return err
 }
 func (ctl *fleetController) getShip(c echo.Context) error {
-	c.Logger().Info("Request: GET Ship")
-	ship, err := ctl.stl.GetShip(c.Param("shipSymbol"))
+
+	shipSymbol := c.Param("shipSymbol")
+	ship, _, err := ctl.sta.FleetApi.GetMyShip(c.Request().Context(), shipSymbol).Execute()
+	// ship, err := ctl.stl.GetShip(c.Param("shipSymbol"))
 	if err != nil {
 		c.Logger().Error(err.Error())
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
-	waypoints, err := ctl.stl.ListWaypoints(ship.Nav.WaypointSymbol.System)
+	// waypoints, err := ctl.stl.ListWaypoints(ship.Nav.WaypointSymbol.System)
+	systemSymbol := ship.Data.Nav.SystemSymbol
+	waypoints, _, err := ctl.sta.SystemsApi.GetSystemWaypoints(c.Request().Context(), systemSymbol).Execute()
 	if err != nil {
 		c.Logger().Error(err.Error())
 		return c.String(http.StatusBadRequest, err.Error())
 	}
 
-	c.Logger().Debugf("Data: Ship\n%+v\nWaypoints\n%+v", ship, waypoints)
+	c.Logger().Debugf("Data: Ship\n%+v\nWaypoints\n%+v", ship.Data, waypoints.Data)
 	err = c.Render(http.StatusOK, "ship", shipPage{
 		Page: PageData{
 			PageName: "Ship",
@@ -124,8 +132,8 @@ func (ctl *fleetController) getShip(c echo.Context) error {
 				"ship",
 			},
 		},
-		Ship:      ship,
-		Waypoints: waypoints,
+		Ship:      ship.Data,
+		Waypoints: waypoints.Data,
 	})
 	if err != nil {
 		c.Logger().Error(err.Error())
@@ -135,15 +143,14 @@ func (ctl *fleetController) getShip(c echo.Context) error {
 
 func (ctl *fleetController) navigateShip(c echo.Context) error {
 	shipSymbol := c.Param("shipSymbol")
-	waypointSymbol := c.FormValue("waypointSymbol")
-	c.Logger().Info(fmt.Sprintf("Request: POST NavigateShip shipSymbol=%s waypointSymbol=%s", shipSymbol, waypointSymbol))
-	err := ctl.stl.NavigateShip(shipSymbol, waypointSymbol)
+	// waypointSymbol := c.FormValue("waypointSymbol")
+	_, _, err := ctl.sta.FleetApi.NavigateShip(c.Request().Context(), shipSymbol).Execute()
 	if err != nil {
 		c.Logger().Error(err.Error())
 		return c.String(http.StatusBadRequest, err.Error())
 	}
 
-	err = c.String(http.StatusOK, "{}")
+	err = c.NoContent(http.StatusOK)
 	if err != nil {
 		c.Logger().Error(err.Error())
 	}

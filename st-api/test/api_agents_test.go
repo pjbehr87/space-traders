@@ -11,10 +11,11 @@ package stapi
 
 import (
 	"context"
+	"testing"
+
+	openapiclient "github.com/pjbehr87/space-traders/st-api"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"testing"
-	openapiclient "github.com/pjbehr87/space-traders/stapi"
 )
 
 func Test_stapi_AgentsApiService(t *testing.T) {
@@ -24,7 +25,7 @@ func Test_stapi_AgentsApiService(t *testing.T) {
 
 	t.Run("Test AgentsApiService GetMyAgent", func(t *testing.T) {
 
-		t.Skip("skip test")  // remove to run test
+		t.Skip("skip test") // remove to run test
 
 		resp, httpRes, err := apiClient.AgentsApi.GetMyAgent(context.Background()).Execute()
 
