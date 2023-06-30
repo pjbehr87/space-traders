@@ -30,7 +30,7 @@
 				<strong>Type:</strong> {{ .Type }}
 			</div>
 			<div>
-				<strong>System:</strong> <a href="/systems/{{ .Symbol.System }}/waypoints">{{ .Symbol.System }}</a>
+				<strong>System:</strong> {{ template "systemLink" .Symbol }}
 			</div>
 			<div>
 				<strong>X:</strong> {{ .X }}
@@ -40,7 +40,7 @@
 			</div>
 			<div>
 				<strong>Orbitals:</strong>
-				{{ if .Orbitals }}
+					{{ if .Orbitals }}
 					<ul>
 						{{ range .Orbitals }}
 						<li>
@@ -48,9 +48,9 @@
 						</li>
 						{{ end }}
 					</ul>
-				{{ else }}
+					{{ else }}
 					None
-				{{ end }}
+					{{ end }}
 			</div>
 			<div>
 				<strong>Faction:</strong> {{ .Faction.Symbol }}

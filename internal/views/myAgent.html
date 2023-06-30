@@ -15,8 +15,7 @@
 				<strong>Symbol:</strong> {{ .Agent.Symbol }}
 			</div>
 			<div>
-				<strong>Headquarters:</strong> <a
-					href="/systems/{{ .Agent.Headquarters.System }}/waypoints/{{ .Agent.Headquarters.Waypoint }}">{{ .Agent.Headquarters.Waypoint }}</a>
+				<strong>Headquarters:</strong> {{ template "waypointLink" .Agent.Headquarters }}
 			</div>
 			<div>
 				<strong>Credits:</strong> {{ .Agent.Credits }}

@@ -40,6 +40,15 @@
 								Contracts
 							</a>
 						</li>
+						<li>
+							<a href="/my/ships"
+								class='nav-link {{ if eq .Page.PageName "Ships" }}text-secondary{{ else }}text-white{{ end }}'>
+								<div class="d-flex align-items-center">
+									<i class="fs-4 mx-auto bi bi-rocket"></i>
+								</div>
+								Ships
+							</a>
+						</li>
 					</ul>
 				</div>
 			</div>
@@ -51,7 +60,7 @@
 		</div>
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
 			integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
-		<script src="/public/main.js"></script>
+		<script src="/public/js/main.js"></script>
 		{{ range .Page.JavaScript }}
 		<script src="/public/js/{{ . }}.js"></script>
 		{{ end }}

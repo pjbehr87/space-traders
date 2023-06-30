@@ -57,6 +57,7 @@ func main() {
 	e := echo.New()
 
 	e.Logger.SetLevel(log.DEBUG)
+	e.Logger.SetHeader("${level}\t")
 
 	conf := internal.GetConf()
 

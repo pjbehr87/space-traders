@@ -19,6 +19,7 @@ func InitRouter(e *echo.Echo, stl stlib.StLib) {
 	})
 
 	NewAgentController(e, stl)
-	NewSystemsController(e, stl)
 	NewContractsController(e, stl)
+	NewFleetController(e, stl)
+	NewSystemsController(e, stl)
 }

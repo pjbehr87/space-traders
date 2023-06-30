@@ -29,15 +29,15 @@ func NewContractsController(e *echo.Echo, stl stlib.StLib) {
 }
 
 func (ctl *contractsController) listContracts(c echo.Context) error {
-	c.Logger().Info("GET MyContracts")
+	c.Logger().Info("Request: GET MyContracts")
 	contracts, err := ctl.stl.ListContracts()
 	if err != nil {
 		c.Logger().Error(err.Error())
 		return c.String(http.StatusInternalServerError, "Error: "+err.Error())
 	}
-	c.Logger().Debugf("Contracts: %+v", contracts)
+	c.Logger().Debugf("Resp: Contracts\n%+v", contracts)
 
-	err = c.Render(http.StatusOK, "contracts", contractsPage{
+	err = c.Render(http.StatusOK, "myContracts", contractsPage{
 		Page: PageData{
 			PageName:   "Contracts",
 			JavaScript: []string{"contracts"},
@@ -51,15 +51,15 @@ func (ctl *contractsController) listContracts(c echo.Context) error {
 }
 
 func (ctl *contractsController) getContract(c echo.Context) error {
-	c.Logger().Info("GET Contract")
+	c.Logger().Info("Request: GET Contract")
 	contract, err := ctl.stl.GetContract(c.Param("contractId"))
 	if err != nil {
 		c.Logger().Error(err.Error())
 		return c.String(http.StatusInternalServerError, "Error: "+err.Error())
 	}
-	c.Logger().Debugf("Contract: %+v", contract)
+	c.Logger().Debugf("Resp: Contract\n%+v", contract)
 
-	err = c.Render(http.StatusOK, "contracts", contractsPage{
+	err = c.Render(http.StatusOK, "myContracts", contractsPage{
 		Page: PageData{
 			PageName:   "Contract",
 			JavaScript: []string{"contracts"},
@@ -73,13 +73,12 @@ func (ctl *contractsController) getContract(c echo.Context) error {
 }
 
 func (ctl *contractsController) acceptContract(c echo.Context) error {
-	c.Logger().Info("Post AcceptContract")
+	c.Logger().Info("Request: Post AcceptContract")
 	err := ctl.stl.AcceptContract(c.Param("contractId"))
 	if err != nil {
 		c.Logger().Error(err.Error())
 		return c.String(http.StatusInternalServerError, "Error: "+err.Error())
 	}
-	c.Logger().Debugf("Accept Contract")
 
 	err = c.NoContent(http.StatusOK)
 	if err != nil {

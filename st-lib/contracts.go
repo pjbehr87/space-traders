@@ -63,7 +63,7 @@ type Deliver struct {
 }
 
 func (stl *StLib) AcceptContract(contractId string) error {
-	_, err := stl.PostUrl("my/contracts/" + contractId + "/accept")
+	_, err := stl.PostUrl("my/contracts/"+contractId+"/accept", nil)
 	if err != nil {
 		return err
 	}
@@ -71,13 +71,13 @@ func (stl *StLib) AcceptContract(contractId string) error {
 }
 
 func (stl *StLib) ListContracts() ([]Contract, error) {
-	resp, err := stl.GetUrl("my/contracts")
+	data, err := stl.GetUrl("my/contracts")
 	if err != nil {
 		return []Contract{}, err
 	}
 
 	contractsData := ContractsData{}
-	err = json.Unmarshal(resp, &contractsData)
+	err = json.Unmarshal(data, &contractsData)
 	if err != nil {
 		return []Contract{}, err
 	}
@@ -130,13 +130,13 @@ func (stl *StLib) ListContracts() ([]Contract, error) {
 }
 
 func (stl *StLib) GetContract(contractId string) (Contract, error) {
-	resp, err := stl.GetUrl("my/contracts/" + contractId)
+	data, err := stl.GetUrl("my/contracts/" + contractId)
 	if err != nil {
 		return Contract{}, err
 	}
 
 	contractData := ContractData{}
-	err = json.Unmarshal(resp, &contractData)
+	err = json.Unmarshal(data, &contractData)
 	if err != nil {
 		return Contract{}, err
 	}
