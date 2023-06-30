@@ -67,14 +67,11 @@
 					</div>
 				</div>
 			</div>
+			{{ if not .Accepted }}
 			<div>
 				<strong>Expiration:</strong> {{ timeFmt .Expiration }} ({{ timeUntil .Expiration }})
 			</div>
-			<div>
-				<strong>DeadlineToAccept:</strong> {{ timeFmt .DeadlineToAccept }} ({{ timeUntil .DeadlineToAccept }})
-			</div>
-
-			{{ if not .Accepted }}
+			
 			<button class="btn btn-primary accept-contract" data-contract-id="{{ .Id }}">Accept</button>
 			{{ end }}
 		</div>

@@ -6,7 +6,7 @@ async function acceptContract(contractId) {
 document.querySelectorAll(".accept-contract").forEach(acceptBtn => {
 	let contractId = this.dataset.contractId
 	acceptBtn.addEventListener('click', function () {
-		acceptContract(this.dataset.contractId);
+		acceptContract(contractId);
 		location.href(`/my/contracts/${contractId}`);
 	});
 })

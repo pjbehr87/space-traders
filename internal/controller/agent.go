@@ -22,20 +22,20 @@ func NewAgentController(e *echo.Echo, stl stlib.StLib) {
 		stl: stl,
 	}
 
-	e.Logger.Debug("Router added: Agent")
+	e.Logger.Debug("Router added: Agent\n")
 	e.GET("/my/agent", cont.getAgent)
 }
 
 func (ctl *agentController) getAgent(c echo.Context) error {
-	c.Logger().Info("GET Agent")
+	c.Logger().Info("Request: GET Agent")
 	agent, err := ctl.stl.MyAgent()
 	if err != nil {
 		c.Logger().Error(err.Error())
 		return c.String(http.StatusInternalServerError, "Error: "+err.Error())
 	}
-	c.Logger().Debugf("Agent: %+v", agent)
+	c.Logger().Debugf("Resp: Agent\n%+v", agent)
 
-	err = c.Render(http.StatusOK, "agent", agentPage{
+	err = c.Render(http.StatusOK, "myAgent", agentPage{
 		Page: PageData{
 			PageName: "Agent",
 		},

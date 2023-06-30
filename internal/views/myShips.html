@@ -1,26 +1,32 @@
 {{ template "layout.html" . }}
 
-
 {{ define "content" }}
-
-{{ $shipyardWp := .Params.Waypoint }}
-{{ with .Shipyard }}
 <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
 	{{ range .Ships }}
 	<div class="col d-flex align-items-start">
 		<div>
-			<h3 class="fs-2 text-body-emphasis">{{ .Name }}</h3>
+			<h3 class="fs-2 text-body-emphasis">{{ .Symbol }}</h3>
 			<div>
-				<button class="btn btn-primary purchase-ship" data-ship-type="{{ .ShipType }}" data-waypoint-symbol="{{ $shipyardWp }}">Purchase</button>
+				<strong>Registration:</strong>
+				<div class="ms-4">
+					{{ with .Registration }}
+					<div>
+						<strong>Name:</strong> {{ .Name }}
+					</div>
+					<div>
+						<strong>Faction:</strong> {{ .FactionSymbol }}
+					</div>
+					<div>
+						<strong>Role:</strong> {{ .Role }}
+					</div>
+					{{ end }}
+				</div>
 			</div>
 			<div>
-				<strong>Type:</strong> {{ .ShipType }}
+				{{ template "shipNav" .Nav }}
 			</div>
 			<div>
-				<strong>Description:</strong> {{ .Description }}
-			</div>
-			<div>
-				<strong>Price:</strong> {{ .PurchasePrice }}
+				{{ template "shipCrew" .Crew }}
 			</div>
 			<div>
 				{{ template "shipFrame" .Frame }}
@@ -41,6 +47,4 @@
 	</div>
 	{{ end }}
 </div>
-{{ end }}
-
 {{ end }}

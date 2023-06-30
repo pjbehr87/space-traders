@@ -24,13 +24,13 @@ type AgentData struct {
 }
 
 func (stl *StLib) MyAgent() (Agent, error) {
-	resp, err := stl.GetUrl("my/agent")
+	data, err := stl.GetUrl("my/agent")
 	if err != nil {
 		return Agent{}, err
 	}
 
 	agentData := AgentData{}
-	err = json.Unmarshal(resp, &agentData)
+	err = json.Unmarshal(data, &agentData)
 	if err != nil {
 		return Agent{}, err
 	}

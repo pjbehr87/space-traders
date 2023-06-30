@@ -11,6 +11,10 @@ type systemsController struct {
 	stl stlib.StLib
 }
 
+type shipyardParams struct {
+	Waypoint string
+}
+
 type waypointsPage struct {
 	Page PageData
 
@@ -20,6 +24,7 @@ type shipyardPage struct {
 	Page PageData
 
 	Shipyard stlib.Shipyard
+	Params   shipyardParams
 }
 
 func NewSystemsController(e *echo.Echo, stl stlib.StLib) {
@@ -34,13 +39,13 @@ func NewSystemsController(e *echo.Echo, stl stlib.StLib) {
 }
 
 func (ctl *systemsController) listSystemWaypoints(c echo.Context) error {
-	c.Logger().Info("LIST Waypoints")
+	c.Logger().Info("Request: LIST Waypoints")
 	waypoints, err := ctl.stl.ListWaypoints(c.Param("systemSymbol"))
 	if err != nil {
 		c.Logger().Error(err.Error())
 		return c.String(http.StatusInternalServerError, "Error: "+err.Error())
 	}
-	c.Logger().Debugf("Waypoints: %+v", waypoints)
+	c.Logger().Debugf("Resp: Waypoints\n%+v", waypoints)
 
 	err = c.Render(http.StatusOK, "waypoints", waypointsPage{
 		Page: PageData{
@@ -55,13 +60,13 @@ func (ctl *systemsController) listSystemWaypoints(c echo.Context) error {
 }
 
 func (ctl *systemsController) getSystemWaypoints(c echo.Context) error {
-	c.Logger().Info("GET Waypoint")
+	c.Logger().Info("Request: GET Waypoint")
 	waypoint, err := ctl.stl.GetWaypoint(c.Param("systemSymbol"), c.Param("waypointSymbol"))
 	if err != nil {
 		c.Logger().Error(err.Error())
 		return c.String(http.StatusInternalServerError, "Error: "+err.Error())
 	}
-	c.Logger().Debugf("Waypoint: %+v", waypoint)
+	c.Logger().Debugf("Resp: Waypoint\n%+v", waypoint)
 
 	// We can share the get waypoint and list waypoints page. Just pass as single-item slice
 	err = c.Render(http.StatusOK, "waypoints", waypointsPage{
@@ -77,26 +82,26 @@ func (ctl *systemsController) getSystemWaypoints(c echo.Context) error {
 }
 
 func (ctl *systemsController) getShipyard(c echo.Context) error {
-	c.Logger().Info("GET Shipyard")
+	c.Logger().Info("Request: GET Shipyard")
 	shipyard, err := ctl.stl.GetShipyard(c.Param("systemSymbol"), c.Param("waypointSymbol"))
 	if err != nil {
 		c.Logger().Error(err.Error())
 		return c.String(http.StatusInternalServerError, "Error: "+err.Error())
 	}
-	c.Logger().Debugf("Waypoint: %+v", shipyard)
+	c.Logger().Debugf("Resp: Waypoint\n%+v", shipyard)
 
 	err = c.Render(http.StatusOK, "shipyard", shipyardPage{
 		Page: PageData{
 			PageName: "Waypoint",
+			JavaScript: []string{
+				"shipyard",
+			},
+		},
+		Params: shipyardParams{
+			Waypoint: c.Param("waypointSymbol"),
 		},
 		Shipyard: shipyard,
 	})
-	// err = c.JSONPretty(http.StatusOK, shipyardPage{
-	// 	Page: PageData{
-	// 		PageName: "Waypoint",
-	// 	},
-	// 	Shipyard: shipyard,
-	// }, "\t")
 	if err != nil {
 		c.Logger().Error(err.Error())
 	}
