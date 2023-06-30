@@ -3,7 +3,8 @@ package controller
 import (
 	"fmt"
 	"net/http"
-	stlib "space-traders/st-lib"
+
+	stlib "github.com/pjbehr87/space-traders/st-lib"
 
 	"github.com/labstack/echo/v4"
 )

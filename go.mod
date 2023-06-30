@@ -1,4 +1,4 @@
-module space-traders
+module github.com/pjbehr87/space-traders
 
 go 1.20
 

@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"html/template"
 	"io"
-	"space-traders/internal"
-	"space-traders/internal/controller"
-	stlib "space-traders/st-lib"
 	"strings"
 	"time"
+
+	stlib "github.com/pjbehr87/space-traders/st-lib"
+
+	"github.com/pjbehr87/space-traders/internal"
+	"github.com/pjbehr87/space-traders/internal/controller"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
