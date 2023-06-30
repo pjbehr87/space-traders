@@ -1,3 +1,41 @@
+{{ define "shipRegistration" }}
+<strong>Registration:</strong>
+<div class="ms-4">
+	<div>
+		<strong>Name:</strong> {{ .Name }}
+	</div>
+	<div>
+		<strong>Faction:</strong> {{ .FactionSymbol }}
+	</div>
+	<div>
+		<strong>Role:</strong> {{ .Role }}
+	</div>
+</div>
+{{ end }}
+
+{{ define "shipFuel" }}
+<strong>Fuel:</strong>
+<div class="ms-4">
+	<div>
+		<strong>Current:</strong> {{ .Current }}
+	</div>
+	<div>
+		<strong>Capacity:</strong> {{ .Capacity }}
+	</div>
+	<div>
+		<strong>Consumed:</strong>
+		<div class="ms-4">
+			<div>
+				<strong>Amount:</strong> {{ .Consumed.Amount }}
+			</div>
+			<div>
+				<strong>Timestamp:</strong> {{ timeFmt .Consumed.Timestamp }}
+			</div>
+		</div>
+	</div>
+</div>
+{{ end }}
+
 {{ define "shipCrew" }}
 <strong>Crew:</strong>
 <div class="ms-4">

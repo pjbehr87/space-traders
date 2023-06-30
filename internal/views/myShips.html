@@ -5,22 +5,9 @@
 	{{ range .Ships }}
 	<div class="col d-flex align-items-start">
 		<div>
-			<h3 class="fs-2 text-body-emphasis">{{ .Symbol }}</h3>
+			<h3 class="fs-2 text-body-emphasis"><a href="/my/ships/{{ .Symbol }}">{{ .Symbol }}</a></h3>
 			<div>
-				<strong>Registration:</strong>
-				<div class="ms-4">
-					{{ with .Registration }}
-					<div>
-						<strong>Name:</strong> {{ .Name }}
-					</div>
-					<div>
-						<strong>Faction:</strong> {{ .FactionSymbol }}
-					</div>
-					<div>
-						<strong>Role:</strong> {{ .Role }}
-					</div>
-					{{ end }}
-				</div>
+				{{ template "shipRegistration" .Registration }}
 			</div>
 			<div>
 				{{ template "shipNav" .Nav }}
