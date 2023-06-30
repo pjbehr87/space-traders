@@ -28,4 +28,4 @@ document.querySelectorAll(".purchase-ship").forEach(purchaseBtn => {
 				location.href('/my/ships');
 			});
 	});
-})
+});

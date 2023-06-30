@@ -51,15 +51,24 @@ type Frame struct {
 	Requirements   ShipRequirements
 }
 
+type FuelJson struct {
+	Current  int
+	Capacity int
+	Consumed FuelConsumedJson
+}
 type Fuel struct {
 	Current  int
 	Capacity int
 	Consumed FuelConsumed
 }
 
-type FuelConsumed struct {
+type FuelConsumedJson struct {
 	Amount    int
 	Timestamp string
+}
+type FuelConsumed struct {
+	Amount    int
+	Timestamp time.Time
 }
 
 type InventoryItem struct {
@@ -160,7 +169,7 @@ type ShipJson struct {
 	Modules      []Module
 	Mounts       []Mount
 	Cargo        Cargo
-	Fuel         Fuel
+	Fuel         FuelJson
 }
 type Ship struct {
 	Symbol       string
@@ -320,7 +329,36 @@ func (stl *StLib) PurchaseShip(shipType string, waypointSymbol string) error {
 	return nil
 }
 
+func (stl *StLib) OrbitShip(shipSymbol string) error {
+	_, err := stl.PostUrl(fmt.Sprintf("my/ships/%s/orbit", shipSymbol), nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (stl *StLib) DockShip(shipSymbol string) error {
+	_, err := stl.PostUrl(fmt.Sprintf("my/ships/%s/dock", shipSymbol), nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func (stl *StLib) NavigateShip(shipSymbol string, waypointSymbol string) error {
+	formData := []byte(fmt.Sprintf(`{
+		"waypointSymbol": "%s"
+	}`, waypointSymbol))
+	_, err := stl.PostUrl(fmt.Sprintf("my/ships/%s/navigate", shipSymbol), &formData)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (sj *ShipJson) toShip() (Ship, error) {
+	fuelConsumedT, err := time.Parse("2006-01-02T15:04:05Z07:00", sj.Fuel.Consumed.Timestamp)
+	if err != nil {
+		return Ship{}, err
+	}
 	departureTimeT, err := time.Parse("2006-01-02T15:04:05Z07:00", sj.Nav.Route.DepartureTime)
 	if err != nil {
 		return Ship{}, err
@@ -335,6 +373,14 @@ func (sj *ShipJson) toShip() (Ship, error) {
 			Name:          sj.Registration.Name,
 			FactionSymbol: sj.Registration.FactionSymbol,
 			Role:          sj.Registration.Role,
+		},
+		Fuel: Fuel{
+			Current:  sj.Fuel.Current,
+			Capacity: sj.Fuel.Capacity,
+			Consumed: FuelConsumed{
+				Amount:    sj.Fuel.Consumed.Amount,
+				Timestamp: fuelConsumedT,
+			},
 		},
 		Nav: Nav{
 			WaypointSymbol: getWps(sj.Nav.WaypointSymbol),
@@ -354,6 +400,8 @@ func (sj *ShipJson) toShip() (Ship, error) {
 				DepartureTime: departureTimeT,
 				Arrival:       arrivalT,
 			},
+			Status:     sj.Nav.Status,
+			FlightMode: sj.Nav.FlightMode,
 		},
 		Crew:    sj.Crew,
 		Frame:   Frame(sj.Frame),
@@ -364,7 +412,7 @@ func (sj *ShipJson) toShip() (Ship, error) {
 	}, nil
 }
 
-func (stl *StLib) GetShips() ([]Ship, error) {
+func (stl *StLib) ListShips() ([]Ship, error) {
 	data, err := stl.GetUrl("my/ships")
 	if err != nil {
 		return []Ship{}, err

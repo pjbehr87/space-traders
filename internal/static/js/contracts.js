@@ -9,4 +9,4 @@ document.querySelectorAll(".accept-contract").forEach(acceptBtn => {
 		acceptContract(contractId);
 		location.href(`/my/contracts/${contractId}`);
 	});
-})
+});

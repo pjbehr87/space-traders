@@ -1,0 +1,118 @@
+{{ template "layout.html" . }}
+
+{{ define "content" }}
+<div class="row g-4 py-4">
+	{{ with .Ship }}
+	<div class="col-4">
+		<div>
+			<h3 class="fs-2 text-body-emphasis"><a href="/my/ships/{{ .Symbol }}">{{ .Symbol }}</a></h3>
+			<div>
+				{{ if eq .Nav.Status "DOCKED" }}
+				<button id="orbit-ship" class="btn btn-primary" data-ship-symbol="{{ .Symbol }}"><i class="bi bi-box-arrow-up"></i> Orbit</button>
+				{{ else if eq .Nav.Status "IN_ORBIT" }}
+				<button id="dock-ship" class="btn btn-primary" data-ship-symbol="{{ .Symbol }}"><i class="bi bi-box-arrow-in-down"></i> Dock</button>
+				{{ end }}
+			</div>
+			<div>
+				{{ template "shipRegistration" .Registration }}
+			</div>
+			<div>
+				{{ template "shipNav" .Nav }}
+			</div>
+			<div>
+				{{ template "shipFuel" .Fuel }}
+			</div>
+			<div>
+				{{ template "shipCrew" .Crew }}
+			</div>
+			<div>
+				{{ template "shipFrame" .Frame }}
+			</div>
+			<div>
+				{{ template "shipReactor" .Reactor }}
+			</div>
+			<div>
+				{{ template "shipEngine" .Engine }}
+			</div>
+			<div>
+				{{ template "shipModules" .Modules }}
+			</div>
+			<div>
+				{{ template "shipMounts" .Mounts }}
+			</div>
+		</div>
+	</div>
+	{{ end }}
+	<div class="col-8">
+		<div class="container">
+			<div class="row g-4 py-4">
+				{{ range .Waypoints }}
+				{{ $wpLink := (print "/systems/" .Symbol.System "/waypoints/" .Symbol.Waypoint) }}
+				<div class="col-6">
+					<div>
+						<h3 class="fs-2 text-body-emphasis">{{ .Symbol.Waypoint }}</h3>
+						{{ if and (not (or (eq $.Ship.Nav.Status "DOCKED") (eq $.Ship.Nav.Status "IN_TRANSIT"))) (not (eq .Symbol.Waypoint $.Ship.Nav.WaypointSymbol.Waypoint)) }}
+						<div>
+							<button class="btn btn-primary navigate-ship" data-ship-symbol="{{ $.Ship.Symbol }}" data-waypoint-symbol="{{ .Symbol.Waypoint }}">
+								<i class='bi
+									{{ if eq .Type "MOON" }}
+										bi-moon
+									{{ else if eq .Type "ASTEROID_FIELD" }}
+										bi-minecart-loaded
+									{{ else if eq .Type "ORBITAL_STATION" }}
+										bi-shop
+									{{ else if eq .Type "PLANET" }}
+										bi-globe
+									{{ else if eq .Type "GAS_GIANT" }}
+										bi-cloud-fog2
+									{{ else if eq .Type "JUMP_GATE" }}
+										bi-hurricane
+									{{ else }}
+										bi-question-circle
+									{{ end }}'></i>
+								Navigate
+							</button>
+						</div>
+						{{ end }}
+						<div>
+							<strong>Type:</strong> {{ .Type }}
+						</div>
+						<div>
+							<strong>Orbitals:</strong>
+							{{ if .Orbitals }}
+							<ul>
+								{{ range .Orbitals }}
+								<li>
+									{{ .Symbol.Waypoint }}
+								</li>
+								{{ end }}
+							</ul>
+							{{ else }}
+							None
+							{{ end }}
+						</div>
+						<div>
+							<strong>Faction:</strong> {{ .Faction.Symbol }}
+						</div>
+						<div>
+							<strong>Traits:</strong>
+							{{ if .Traits }}
+							<ul>
+								{{ range .Traits }}
+								<li>
+									<span class="link-dark" data-toggle="tooltip" title="{{ .Description }}">{{ .Symbol }}</span>
+								</li>
+								{{ end }}
+							</ul>
+							{{ else }}
+							None
+							{{ end }}
+						</div>
+					</div>
+				</div>
+				{{ end }}
+			</div>
+		</div>
+	</div>
+</div>
+{{ end }}
