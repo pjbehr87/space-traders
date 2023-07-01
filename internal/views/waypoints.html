@@ -3,7 +3,8 @@
 {{ define "content" }}
 <div class="row g-4 py-4">
 	{{ range .Waypoints }}
-	{{ $wpLink := (print "/systems/" .Symbol.System "/waypoints/" .Symbol.Waypoint) }}
+	{{ $waypoint := .Symbol }}
+	{{ $system := .SystemSymbol }}
 	<div class="col-4">
 		<div
 			class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
@@ -25,12 +26,14 @@
 				{{ end }}'></i>
 		</div>
 		<div>
-			<h3 class="fs-2 text-body-emphasis">{{ .Symbol.Waypoint }}</h3>
+			<h3 class="fs-2 text-body-emphasis">{{ .Symbol }}</h3>
 			<div>
 				<strong>Type:</strong> {{ .Type }}
 			</div>
 			<div>
-				<strong>System:</strong> {{ template "systemLink" .Symbol }}
+				{{ $waypoint := .Symbol }}
+				{{ $system := .SystemSymbol }}
+				<strong>System:</strong> <a href="/systems/{{ .SystemSymbol }}/waypoints">{{ .SystemSymbol }}</a>
 			</div>
 			<div>
 				<strong>X:</strong> {{ .X }}
@@ -44,7 +47,7 @@
 					<ul>
 						{{ range .Orbitals }}
 						<li>
-							{{ .Symbol.Waypoint }}
+							{{ .Symbol }}
 						</li>
 						{{ end }}
 					</ul>
@@ -73,7 +76,7 @@
 					{{ range .Traits }}
 					{{ if eq .Symbol "SHIPYARD" }}
 					<li>
-						<a href="{{ $wpLink }}/shipyard" data-toggle="tooltip" title="{{ .Description }}">{{ .Symbol }}</a>
+						<a href="/systems/{{ $system }}/waypoints/{{ $waypoint }}/shipyard" data-toggle="tooltip" title="{{ .Description }}">{{ .Symbol }}</a>
 					</li>
 					{{ else }}
 					<li>

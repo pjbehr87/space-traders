@@ -10,7 +10,6 @@ import (
 	"time"
 
 	stapi "github.com/pjbehr87/space-traders/st-api"
-	stlib "github.com/pjbehr87/space-traders/st-lib"
 
 	"github.com/pjbehr87/space-traders/internal"
 	"github.com/pjbehr87/space-traders/internal/controller"
@@ -29,6 +28,10 @@ type Template struct {
 
 func NewTemplate() *Template {
 	funcMap := template.FuncMap{
+		"sysFromWp": func(wp string) string {
+			splitWp := strings.Split(wp, "-")
+			return fmt.Sprintf("%s-%s", splitWp[0], splitWp[1])
+		},
 		"timeFmt": func(date time.Time) string {
 			localTz, err := time.LoadLocation("Local")
 			if err != nil {
@@ -120,12 +123,11 @@ func main() {
 	t := NewTemplate()
 	e.Renderer = t
 
+	e.Logger.Info("Hosting static files: " + e.Static("/public", "internal/static").Path)
+
 	stConf := stapi.NewConfiguration()
 	sta := stapi.NewAPIClient(stConf)
 
-	e.Logger.Info("Hosting static files: " + e.Static("/public", "internal/static").Path)
-	stl := stlib.NewStLib(conf.Agent.Token)
-
-	controller.InitRouter(e, stl, sta)
+	controller.InitRouter(e, sta)
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", conf.Server.Port)))
 }

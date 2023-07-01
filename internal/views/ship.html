@@ -50,9 +50,9 @@
 				<div class="col-6">
 					<div>
 						<h3 class="fs-2 text-body-emphasis">{{ .Symbol }}</h3>
-						{{ if and (not (or (eq $.Ship.Nav.Status "DOCKED") (eq $.Ship.Nav.Status "IN_TRANSIT"))) (not (eq .Symbol.Waypoint $.Ship.Nav.WaypointSymbol.Waypoint)) }}
+						{{ if and (not (or (eq $.Ship.Nav.Status "DOCKED") (eq $.Ship.Nav.Status "IN_TRANSIT"))) (not (eq .Symbol $.Ship.Nav.WaypointSymbol)) }}
 						<div>
-							<button class="btn btn-primary navigate-ship" data-ship-symbol="{{ $.Ship.Symbol }}" data-waypoint-symbol="{{ .Symbol.Waypoint }}">
+							<button class="btn btn-primary navigate-ship" data-ship-symbol="{{ $.Ship.Symbol }}" data-waypoint-symbol="{{ .Symbol }}">
 								<i class='bi
 									{{ if eq .Type "MOON" }}
 										bi-moon

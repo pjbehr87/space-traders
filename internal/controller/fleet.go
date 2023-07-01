@@ -1,17 +1,15 @@
 package controller
 
 import (
-	"fmt"
+	"io"
 	"net/http"
 
 	stapi "github.com/pjbehr87/space-traders/st-api"
-	stlib "github.com/pjbehr87/space-traders/st-lib"
 
 	"github.com/labstack/echo/v4"
 )
 
 type fleetController struct {
-	stl stlib.StLib
 	sta *stapi.APIClient
 }
 
@@ -27,9 +25,8 @@ type shipPage struct {
 	Waypoints []stapi.Waypoint
 }
 
-func NewFleetController(e *echo.Echo, stl stlib.StLib, sta *stapi.APIClient) {
+func NewFleetController(e *echo.Echo, sta *stapi.APIClient) {
 	cont := fleetController{
-		stl: stl,
 		sta: sta,
 	}
 
@@ -43,11 +40,22 @@ func NewFleetController(e *echo.Echo, stl stlib.StLib, sta *stapi.APIClient) {
 }
 
 func (ctl *fleetController) purchaseShip(c echo.Context) error {
-	c.Logger().Info(fmt.Sprintf("Request: POST PurchaseShip shipType=%s waypointSymbol=%s", c.FormValue("shipType"), c.FormValue("waypointSymbol")))
-	err := ctl.stl.PurchaseShip(c.FormValue("shipType"), c.FormValue("waypointSymbol"))
+	shipType, err := stapi.NewShipTypeFromValue(c.FormValue("shipType"))
 	if err != nil {
-		c.Logger().Error(err.Error())
-		return c.String(http.StatusBadRequest, err.Error())
+		c.Logger().Error(err)
+		c.String(http.StatusBadRequest, err.Error())
+		return err
+	}
+	waypointSymbol := c.FormValue("waypointSymbol")
+
+	c.Logger().Debug(*shipType, waypointSymbol)
+
+	purchaseShipReq := *stapi.NewPurchaseShipRequest(*shipType, waypointSymbol)
+	_, resp, err := ctl.sta.FleetApi.PurchaseShip(c.Request().Context()).PurchaseShipRequest(purchaseShipReq).Execute()
+	if err != nil {
+		errBody, _ := io.ReadAll(resp.Body)
+		c.Logger().Error(string(errBody))
+		return c.String(http.StatusBadRequest, string(errBody))
 	}
 
 	err = c.String(http.StatusOK, "{}")
@@ -57,8 +65,8 @@ func (ctl *fleetController) purchaseShip(c echo.Context) error {
 	return err
 }
 func (ctl *fleetController) orbitShip(c echo.Context) error {
-	c.Logger().Info(fmt.Sprintf("Request: POST OrbitShip shipSymbol=%s", c.Param("shipSymbol")))
-	err := ctl.stl.OrbitShip(c.Param("shipSymbol"))
+	shipSymbol := c.Param("shipSymbol")
+	_, _, err := ctl.sta.FleetApi.OrbitShip(c.Request().Context(), shipSymbol).Execute()
 	if err != nil {
 		c.Logger().Error(err.Error())
 		return c.String(http.StatusBadRequest, err.Error())
@@ -71,8 +79,8 @@ func (ctl *fleetController) orbitShip(c echo.Context) error {
 	return err
 }
 func (ctl *fleetController) dockShip(c echo.Context) error {
-	c.Logger().Info(fmt.Sprintf("Request: POST DockShip shipSymbol=%s", c.Param("shipSymbol")))
-	err := ctl.stl.DockShip(c.Param("shipSymbol"))
+	shipSymbol := c.Param("shipSymbol")
+	_, _, err := ctl.sta.FleetApi.DockShip(c.Request().Context(), shipSymbol).Execute()
 	if err != nil {
 		c.Logger().Error(err.Error())
 		return c.String(http.StatusBadRequest, err.Error())
@@ -107,16 +115,13 @@ func (ctl *fleetController) listShips(c echo.Context) error {
 	return err
 }
 func (ctl *fleetController) getShip(c echo.Context) error {
-
 	shipSymbol := c.Param("shipSymbol")
 	ship, _, err := ctl.sta.FleetApi.GetMyShip(c.Request().Context(), shipSymbol).Execute()
-	// ship, err := ctl.stl.GetShip(c.Param("shipSymbol"))
 	if err != nil {
 		c.Logger().Error(err.Error())
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
-	// waypoints, err := ctl.stl.ListWaypoints(ship.Nav.WaypointSymbol.System)
 	systemSymbol := ship.Data.Nav.SystemSymbol
 	waypoints, _, err := ctl.sta.SystemsApi.GetSystemWaypoints(c.Request().Context(), systemSymbol).Execute()
 	if err != nil {
@@ -143,8 +148,9 @@ func (ctl *fleetController) getShip(c echo.Context) error {
 
 func (ctl *fleetController) navigateShip(c echo.Context) error {
 	shipSymbol := c.Param("shipSymbol")
-	// waypointSymbol := c.FormValue("waypointSymbol")
-	_, _, err := ctl.sta.FleetApi.NavigateShip(c.Request().Context(), shipSymbol).Execute()
+	waypointSymbol := c.FormValue("waypointSymbol")
+	navShipReq := *stapi.NewNavigateShipRequest(waypointSymbol)
+	_, _, err := ctl.sta.FleetApi.NavigateShip(c.Request().Context(), shipSymbol).NavigateShipRequest(navShipReq).Execute()
 	if err != nil {
 		c.Logger().Error(err.Error())
 		return c.String(http.StatusBadRequest, err.Error())

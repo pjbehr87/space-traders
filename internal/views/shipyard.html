@@ -11,10 +11,10 @@
 		<div>
 			<h3 class="fs-2 text-body-emphasis">{{ .Name }}</h3>
 			<div>
-				<button class="btn btn-primary purchase-ship" data-ship-type="{{ .ShipType }}" data-waypoint-symbol="{{ $shipyardWp }}">Purchase</button>
+				<button class="btn btn-primary purchase-ship" data-ship-type="{{ .Type }}" data-waypoint-symbol="{{ $shipyardWp }}">Purchase</button>
 			</div>
 			<div>
-				<strong>Type:</strong> {{ .ShipType }}
+				<strong>Type:</strong> {{ .Type }}
 			</div>
 			<div>
 				<strong>Description:</strong> {{ .Description }}

@@ -3,13 +3,13 @@ package controller
 import (
 	"net/http"
 
-	stlib "github.com/pjbehr87/space-traders/st-lib"
+	stapi "github.com/pjbehr87/space-traders/st-api"
 
 	"github.com/labstack/echo/v4"
 )
 
 type systemsController struct {
-	stl stlib.StLib
+	sta *stapi.APIClient
 }
 
 type shipyardParams struct {
@@ -19,18 +19,18 @@ type shipyardParams struct {
 type waypointsPage struct {
 	Page PageData
 
-	Waypoints []stlib.Waypoint
+	Waypoints []stapi.Waypoint
 }
 type shipyardPage struct {
 	Page PageData
 
-	Shipyard stlib.Shipyard
+	Shipyard stapi.Shipyard
 	Params   shipyardParams
 }
 
-func NewSystemsController(e *echo.Echo, stl stlib.StLib) {
+func NewSystemsController(e *echo.Echo, sta *stapi.APIClient) {
 	cont := systemsController{
-		stl: stl,
+		sta: sta,
 	}
 
 	e.Logger.Debug("Router added: Systems")
@@ -40,8 +40,8 @@ func NewSystemsController(e *echo.Echo, stl stlib.StLib) {
 }
 
 func (ctl *systemsController) listSystemWaypoints(c echo.Context) error {
-	c.Logger().Info("Request: LIST Waypoints")
-	waypoints, err := ctl.stl.ListWaypoints(c.Param("systemSymbol"))
+	systemSymbol := c.Param("systemSymbol")
+	waypoints, _, err := ctl.sta.SystemsApi.GetSystemWaypoints(c.Request().Context(), systemSymbol).Execute()
 	if err != nil {
 		c.Logger().Error(err.Error())
 		return c.String(http.StatusInternalServerError, "Error: "+err.Error())
@@ -52,7 +52,7 @@ func (ctl *systemsController) listSystemWaypoints(c echo.Context) error {
 		Page: PageData{
 			PageName: "Waypoints",
 		},
-		Waypoints: waypoints,
+		Waypoints: waypoints.Data,
 	})
 	if err != nil {
 		c.Logger().Error(err.Error())
@@ -61,8 +61,9 @@ func (ctl *systemsController) listSystemWaypoints(c echo.Context) error {
 }
 
 func (ctl *systemsController) getSystemWaypoints(c echo.Context) error {
-	c.Logger().Info("Request: GET Waypoint")
-	waypoint, err := ctl.stl.GetWaypoint(c.Param("systemSymbol"), c.Param("waypointSymbol"))
+	systemSymbol := c.Param("systemSymbol")
+	waypointSymbol := c.Param("waypointSymbol")
+	waypoint, _, err := ctl.sta.SystemsApi.GetWaypoint(c.Request().Context(), systemSymbol, waypointSymbol).Execute()
 	if err != nil {
 		c.Logger().Error(err.Error())
 		return c.String(http.StatusInternalServerError, "Error: "+err.Error())
@@ -74,7 +75,7 @@ func (ctl *systemsController) getSystemWaypoints(c echo.Context) error {
 		Page: PageData{
 			PageName: "Waypoint",
 		},
-		Waypoints: []stlib.Waypoint{waypoint},
+		Waypoints: []stapi.Waypoint{waypoint.Data},
 	})
 	if err != nil {
 		c.Logger().Error(err.Error())
@@ -83,8 +84,9 @@ func (ctl *systemsController) getSystemWaypoints(c echo.Context) error {
 }
 
 func (ctl *systemsController) getShipyard(c echo.Context) error {
-	c.Logger().Info("Request: GET Shipyard")
-	shipyard, err := ctl.stl.GetShipyard(c.Param("systemSymbol"), c.Param("waypointSymbol"))
+	systemSymbol := c.Param("systemSymbol")
+	waypointSymbol := c.Param("waypointSymbol")
+	shipyard, _, err := ctl.sta.SystemsApi.GetShipyard(c.Request().Context(), systemSymbol, waypointSymbol).Execute()
 	if err != nil {
 		c.Logger().Error(err.Error())
 		return c.String(http.StatusInternalServerError, "Error: "+err.Error())
@@ -99,9 +101,9 @@ func (ctl *systemsController) getShipyard(c echo.Context) error {
 			},
 		},
 		Params: shipyardParams{
-			Waypoint: c.Param("waypointSymbol"),
+			Waypoint: waypointSymbol,
 		},
-		Shipyard: shipyard,
+		Shipyard: shipyard.Data,
 	})
 	if err != nil {
 		c.Logger().Error(err.Error())
