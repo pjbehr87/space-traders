@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"io/fs"
 	"strings"
 	"time"
 
@@ -61,13 +62,17 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Con
 	return tmpl.ExecuteTemplate(w, name+".html", data)
 }
 
+//go:embed internal/static/*
+var staticFS embed.FS
+
 func main() {
 	e := echo.New()
 
+	conf := internal.GetConf()
+
+	// Configure the Logger
 	e.Logger.SetLevel(log.DEBUG)
 	e.Logger.SetHeader("${level}\t")
-
-	conf := internal.GetConf()
 
 	logLevel := log.ERROR
 	switch strings.ToLower(conf.Server.LogLevel) {
@@ -84,6 +89,7 @@ func main() {
 	e.Logger.SetLevel(logLevel)
 	e.Logger.Info(fmt.Sprintf("LogLevel set to: %s", conf.Server.LogLevel))
 
+	// Inject the ST-API auth token into every request context so that the requests can access ST-API
 	e.Use(func(fn echo.HandlerFunc) echo.HandlerFunc {
 		return func(ctx echo.Context) error {
 			ctx.SetRequest(
@@ -95,6 +101,7 @@ func main() {
 		}
 	})
 
+	// Log every request at the INFO level. Include query or form params if they are given
 	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
 		LogURI:    true,
 		LogStatus: true,
@@ -120,14 +127,24 @@ func main() {
 		},
 	}))
 
+	// Set the html renderer, that was set up at the top of the page, as the renderer for echo
 	t := NewTemplate()
 	e.Renderer = t
 
-	e.Logger.Info("Hosting static files: " + e.Static("/public", "internal/static").Path)
+	// Host embeded the static JS and CSS files
+	sfs, err := fs.Sub(staticFS, "internal/static")
+	if err != nil {
+		panic(err.Error())
+	}
+	e.Logger.Info("Hosting static files: " + e.StaticFS("/public", sfs).Path)
 
+	// Instantiate the ST-API client
 	stConf := stapi.NewConfiguration()
 	sta := stapi.NewAPIClient(stConf)
 
+	// Add all of the routs and handlers to the server
 	controller.InitRouter(e, sta)
+
+	// Start the server, lisenting at port conf.Server.Port
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", conf.Server.Port)))
 }

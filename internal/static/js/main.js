@@ -1,1 +1,1 @@
-import { fetch } from 'node-fetch';
+// Global JS

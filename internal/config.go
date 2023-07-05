@@ -6,6 +6,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// Go struct representing the config.yaml
 type Conf struct {
 	Agent struct {
 		Token string
@@ -17,6 +18,7 @@ type Conf struct {
 	}
 }
 
+// Read the config.yaml into a go object
 func GetConf() Conf {
 	confFile, err := os.ReadFile("config/conf.yaml")
 	if err != nil {
