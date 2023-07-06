@@ -5,3 +5,7 @@
 	height: 3rem;
 	border-radius: .75rem;
 }
+
+ul {
+	margin-bottom: 0 !important;
+}

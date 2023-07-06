@@ -29,6 +29,14 @@ type Template struct {
 
 func NewTemplate() *Template {
 	funcMap := template.FuncMap{
+		"wpHasTrait": func(traits []stapi.WaypointTrait, search string) bool {
+			for _, trait := range traits {
+				if trait.Symbol == search {
+					return true
+				}
+			}
+			return false
+		},
 		"sysFromWp": func(wp string) string {
 			splitWp := strings.Split(wp, "-")
 			return fmt.Sprintf("%s-%s", splitWp[0], splitWp[1])

@@ -1,82 +1,154 @@
-async function orbitShip(shipSymbol) {
-	const resp = await fetch(`/my/ships/${shipSymbol}/orbit`, {
-		method: 'POST'
-	});
+'use strict';
 
-	respJson = await resp.json();
+const 
+	SHIP_SYMBOL = document.querySelectorAll("#ship-symbol")[0].value;
+	MYSHIP_URL = `/my/ships/${SHIP_SYMBOL}`;
 
-	return respJson;
-}
+document.querySelectorAll("#orbit-ship").forEach($thisBtn => {
+	$thisBtn.addEventListener('click', function () {
+		btnAction($thisBtn);
 
-document.querySelectorAll("#orbit-ship").forEach(obitShipBtn => {
-	let shipSymbol = obitShipBtn.dataset.shipSymbol;
-
-	obitShipBtn.addEventListener('click', function () {
-		obitShipBtn.textContent = 'Orbiting...';
-		obitShipBtn.disabled = true;
-		orbitShip(shipSymbol)
-			.then(resp => {
-				if (resp["error"] !== undefined) {
-					alert(resp.error.message);
+		fetchUrl(
+			`${MYSHIP_URL}/orbit`,
+			{
+				successFn: () => {
+					location.reload();
+				},
+				errFn: (err) => {
+					alert(err);
+					btnDefault($thisBtn);
 				}
-				location.reload();
 			});
 	});
 });
 
-async function dockShip(shipSymbol) {
-	const resp = await fetch(`/my/ships/${shipSymbol}/dock`, {
-		method: 'POST'
-	});
+document.querySelectorAll("#dock-ship").forEach($thisBtn => {
+	$thisBtn.addEventListener('click', function () {
+		btnAction($thisBtn);
 
-	respJson = await resp.json();
-
-	return respJson;
-}
-
-document.querySelectorAll("#dock-ship").forEach(dockShipBtn => {
-	let shipSymbol = dockShipBtn.dataset.shipSymbol;
-
-	dockShipBtn.addEventListener('click', function () {
-		dockShipBtn.textContent = 'Docking...';
-		dockShipBtn.disabled = true;
-		dockShip(shipSymbol)
-			.then(resp => {
-				if (resp["error"] !== undefined) {
-					alert(resp.error.message);
+		fetchUrl(
+			`${MYSHIP_URL}/dock`,
+			{
+				successFn: () => {
+					location.reload();
+				},
+				errFn: (err) => {
+					alert(err);
+					btnDefault($thisBtn);
 				}
-				location.reload();
 			});
 	});
 });
 
-async function navigateShip(shipSymbol, waypointSymbol) {
-	let formData = new FormData();
-	formData.append('waypointSymbol', waypointSymbol);
-	const resp = await fetch(`/my/ships/${shipSymbol}/navigate`, {
-		method: 'POST',
-		body: formData
+document.querySelectorAll(".navigate-ship").forEach($thisBtn => {
+	$thisBtn.addEventListener('click', function () {
+		btnAction($thisBtn);
+
+		let formData = new FormData();
+		formData.append('waypointSymbol', $thisBtn.dataset.waypointSymbol);
+		fetchUrl(
+			`${MYSHIP_URL}/navigate`,
+			{
+				formData: formData,
+				successFn: () => {
+					location.reload();
+				},
+				errFn: (err) => {
+					alert(err);
+					btnDefault($thisBtn);
+				}
+			});
 	});
+});
 
-	respJson = await resp.json();
+document.querySelectorAll("#refuel-ship").forEach($thisBtn => {
+	$thisBtn.addEventListener('click', function () {
+		btnAction($thisBtn);
 
-	return respJson;
-}
+		let formData = new FormData();
+		formData.append('units', $thisBtn.dataset.fuelUnits);
+		fetchUrl(
+			`${MYSHIP_URL}/refuel`,
+			{
+				formData: formData,
+				successFn: () => {
+					location.reload();
+				},
+				errFn: (err) => {
+					alert(err);
+					btnDefault($thisBtn);
+				}
+			});
+	});
+});
 
-document.querySelectorAll(".navigate-ship").forEach(navigateShipBtn => {
+function miningCooldown($btn, remainingSeconds) {
 	let
-		shipSymbol = navigateShipBtn.dataset.shipSymbol,
-		waypointSymbol = navigateShipBtn.dataset.waypointSymbol;
+		$btnIconMineCart = $btn.querySelectorAll('i')[0],
+		$btnIconCooldown = $btnIconMineCart.cloneNode(true);
+	$btnIconCooldown.classList.remove("bi-minecart-loaded");
+	$btn.classList.remove("btn-primary");
+	$btnIconCooldown.classList.add("bi-clock-history");
+	$btn.classList.add("btn-warning");
+	$btn.innerHTML = $btnIconCooldown.outerHTML + ' Extracting (' + remainingSeconds + 's)';
 
-	navigateShipBtn.addEventListener('click', function () {
-		navigateShipBtn.textContent = 'Navigating...';
-		navigateShipBtn.disabled = true;
-		navigateShip(shipSymbol, waypointSymbol)
-			.then(resp => {
-				if (resp["error"] !== undefined) {
-					alert(resp.error.message);
+	let countdown = setInterval(() => {
+		$btn.innerHTML = $btnIconCooldown.outerHTML + ' Extracting (' + --remainingSeconds + 's)';
+		if (remainingSeconds === 0) {
+			$btn.disabled = false;
+			$btn.innerHTML = $btnIconCooldown.outerHTML + ' Extract';
+			clearInterval(countdown);
+		}
+	}, 1000);
+
+	setTimeout(() => {
+		$btn.classList.remove("btn-warning");
+		$btn.classList.add("btn-primary");
+		$btn.disabled = false;
+		$btn.innerHTML = $btnIconMineCart.outerHTML + ' Extract';
+	}, (remainingSeconds * 1000));
+}
+
+document.querySelectorAll("#extract-minerals").forEach($thisBtn => {
+	$thisBtn.addEventListener('click', function () {
+		btnAction($thisBtn);
+
+		fetchUrl(
+			`${MYSHIP_URL}/extract`,
+			{
+				successFn: (respJson) => {
+					document.querySelectorAll('#ship-cargo-units')[0].textContent = respJson.cargo.units;
+					miningCooldown($thisBtn, respJson.cooldown.remainingSeconds);
+				},
+				failFn: (respJson) => {
+					miningCooldown($thisBtn, respJson.error.data.cooldown.remainingSeconds);
+				},
+				errFn: (err) => {
+					alert(err);
+					btnDefault($thisBtn);
 				}
-				location.reload();
+			});
+	});
+});
+
+document.querySelectorAll(".sell-cargo").forEach($thisBtn => {
+	$thisBtn.addEventListener('click', function () {
+		btnAction($thisBtn);
+
+		let formData = new FormData();
+		formData.append('symbol', $thisBtn.dataset.goodsSymbol);
+		formData.append('units', $thisBtn.dataset.goodsUnits);
+		fetchUrl(
+			`${MYSHIP_URL}/sell`,
+			{
+				formData: formData,
+				successFn: () => {
+					$thisBtn.closest('li').remove()
+				},
+				errFn: (err) => {
+					alert(err);
+					btnDefault($thisBtn);
+				}
 			});
 	});
 });

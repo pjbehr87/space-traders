@@ -63,6 +63,45 @@ None
 </div>
 {{ end }}
 
+{{ define "shipCargo" }}
+<strong>Cargo:</strong>
+<div class="ms-4">
+	{{ with .Cargo }}
+	<div>
+		<strong>Capacity:</strong> {{ .Capacity }}
+	</div>
+	<div>
+		<strong>Units:</strong> <span id="ship-cargo-units">{{ .Units }}</span>
+	</div>
+	<div>
+		<strong>Inventory: </strong>
+		{{ if .Inventory }}
+		<ul>
+			{{ range .Inventory }}
+			<li>
+				{{ if eq $.Nav.Status "DOCKED" }}
+				<button class="btn btn-primary sell-cargo" data-action="Selling..." data-goods-symbol="{{ .Symbol }}" data-goods-units="{{ .Units }}">
+					<i class="bi-currency-exchange"></i>
+					Sell
+				</button>
+				{{ end }}
+				<div>
+					<strong>Symbol:</strong> {{ .Symbol }}
+				</div>
+				<div>
+					<strong>Units:</strong> {{ .Units }}
+				</div>
+			</li>
+			{{ end }}
+		</ul>
+		{{ else }}
+		None
+		{{ end }}
+	</div>
+	{{ end }}
+</div>
+{{ end }}
+
 {{ define "shipCrew" }}
 <strong>Crew:</strong>
 <div class="ms-4">
