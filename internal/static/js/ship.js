@@ -142,7 +142,7 @@ document.querySelectorAll(".sell-cargo").forEach($thisBtn => {
 			`${MYSHIP_URL}/sell`,
 			{
 				formData: formData,
-				successFn: (respJson) => {
+				successFn: () => {
 					$thisBtn.closest('li').remove()
 				},
 				errFn: (err) => {
