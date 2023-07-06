@@ -1,12 +1,18 @@
-async function acceptContract(contractId) {
-	const resp = await fetch(`/my/contracts/${contractId}/accept`, { method: 'POST' });
-	console.log(resp);
-}
-
-document.querySelectorAll(".accept-contract").forEach(acceptBtn => {
-	let contractId = this.dataset.contractId
+document.querySelectorAll(".accept-contract").forEach($thisBtn => {
 	acceptBtn.addEventListener('click', function () {
-		acceptContract(contractId);
-		location.href(`/my/contracts/${contractId}`);
+		btnAction($thisBtn);
+
+		let contractId = $thisBtn.dataset.contractId
+		fetchUrl(
+			`/my/contracts/${contractId}/accept`,
+			{
+				successFn: () => {
+					location.reload();
+				},
+				errFn: (err) => {
+					alert(err);
+					btnDefault($thisBtn);
+				}
+			});
 	});
 });

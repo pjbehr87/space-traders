@@ -80,7 +80,7 @@ None
 			{{ range .Inventory }}
 			<li>
 				{{ if eq $.Nav.Status "DOCKED" }}
-				<button class="btn btn-primary sell-cargo" data-goods-symbol="{{ .Symbol }}" data-goods-units="{{ .Units }}">
+				<button class="btn btn-primary sell-cargo" data-action="Selling..." data-goods-symbol="{{ .Symbol }}" data-goods-units="{{ .Units }}">
 					<i class="bi-currency-exchange"></i>
 					Sell
 				</button>

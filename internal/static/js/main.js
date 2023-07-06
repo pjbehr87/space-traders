@@ -1,8 +1,8 @@
 // Global JS
 
-function fetchUrl(url, { formData = new FormData(), successFn = ()=>{}, failFn = ()=>{}, errFn = ()=>{} }) {
+function fetchUrl(url, { method = 'POST', formData = new FormData(), successFn = ()=>{}, failFn = ()=>{}, errFn = ()=>{} }) {
 	fetch(url, {
-		method: 'POST',
+		method: method,
 		body: formData
 	}).then(resp => {
 		resp.json().then(respJson => {
@@ -17,4 +17,16 @@ function fetchUrl(url, { formData = new FormData(), successFn = ()=>{}, failFn =
 	}).catch(err => {
 		errFn(err);
 	});
+}
+
+function btnAction(btn) {
+	let btnIcon = btn.querySelectorAll('i')[0].outerHTML;
+	btn.dataset.default = btn.textContent.trim();
+	btn.innerHTML = btnIcon + ' ' + btn.dataset.action;
+	btn.disabled = true;
+}
+function btnDefault(btn) {
+	let btnIcon = btn.querySelectorAll('i')[0].outerHTML;
+	btn.innerHTML = btnIcon + ' ' + btn.dataset.default;
+	btn.disabled = false;
 }

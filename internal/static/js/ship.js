@@ -1,59 +1,53 @@
 'use strict';
 
-const shipSymbol = document.querySelectorAll("#ship-symbol")[0].value;
+const 
+	SHIP_SYMBOL = document.querySelectorAll("#ship-symbol")[0].value;
+	MYSHIP_URL = `/my/ships/${SHIP_SYMBOL}`;
 
-document.querySelectorAll("#orbit-ship").forEach(obitShipBtn => {
-	obitShipBtn.addEventListener('click', function () {
-		let btnIcon = obitShipBtn.querySelectorAll('i')[0].outerHTML;
-		obitShipBtn.innerHTML = btnIcon + ' Orbiting...';
-		obitShipBtn.disabled = true;
+document.querySelectorAll("#orbit-ship").forEach($thisBtn => {
+	$thisBtn.addEventListener('click', function () {
+		btnAction($thisBtn);
 
 		fetchUrl(
-			`/my/ships/${shipSymbol}/orbit`,
+			`${MYSHIP_URL}/orbit`,
 			{
 				successFn: () => {
 					location.reload();
 				},
 				errFn: (err) => {
 					alert(err);
-					obitShipBtn.innerHTML = btnIcon + ' Orbit';
-					obitShipBtn.disabled = false;
+					btnDefault($thisBtn);
 				}
 			});
 	});
 });
 
-document.querySelectorAll("#dock-ship").forEach(dockShipBtn => {
-	dockShipBtn.addEventListener('click', function () {
-		let btnIcon = dockShipBtn.querySelectorAll('i')[0].outerHTML;
-		dockShipBtn.innerHTML = btnIcon + ' Docking...';
-		dockShipBtn.disabled = true;
+document.querySelectorAll("#dock-ship").forEach($thisBtn => {
+	$thisBtn.addEventListener('click', function () {
+		btnAction($thisBtn);
 
 		fetchUrl(
-			`/my/ships/${shipSymbol}/dock`,
+			`${MYSHIP_URL}/dock`,
 			{
 				successFn: () => {
 					location.reload();
 				},
 				errFn: (err) => {
 					alert(err);
-					dockShipBtn.innerHTML = btnIcon + ' Dock';
-					dockShipBtn.disabled = false;
+					btnDefault($thisBtn);
 				}
 			});
 	});
 });
 
-document.querySelectorAll(".navigate-ship").forEach(navigateShipBtn => {
-	navigateShipBtn.addEventListener('click', function () {
-		let btnIcon = navigateShipBtn.querySelectorAll('i')[0].outerHTML;
-		navigateShipBtn.innerHTML = btnIcon + ' Navigating...';
-		navigateShipBtn.disabled = true;
+document.querySelectorAll(".navigate-ship").forEach($thisBtn => {
+	$thisBtn.addEventListener('click', function () {
+		btnAction($thisBtn);
 
 		let formData = new FormData();
-		formData.append('waypointSymbol', navigateShipBtn.dataset.waypointSymbol);
+		formData.append('waypointSymbol', $thisBtn.dataset.waypointSymbol);
 		fetchUrl(
-			`/my/ships/${shipSymbol}/navigate`,
+			`${MYSHIP_URL}/navigate`,
 			{
 				formData: formData,
 				successFn: () => {
@@ -61,23 +55,20 @@ document.querySelectorAll(".navigate-ship").forEach(navigateShipBtn => {
 				},
 				errFn: (err) => {
 					alert(err);
-					navigateShipBtn.innerHTML = btnIcon + ' Navagate';
-					navigateShipBtn.disabled = false;
+					btnDefault($thisBtn);
 				}
 			});
 	});
 });
 
-document.querySelectorAll("#refuel-ship").forEach(fullRefuelShipBtn => {
-	fullRefuelShipBtn.addEventListener('click', function () {
-		let btnIcon = fullRefuelShipBtn.querySelectorAll('i')[0].outerHTML;
-		fullRefuelShipBtn.innerHTML = btnIcon + ' Refueling...';
-		fullRefuelShipBtn.disabled = true;
+document.querySelectorAll("#refuel-ship").forEach($thisBtn => {
+	$thisBtn.addEventListener('click', function () {
+		btnAction($thisBtn);
 
 		let formData = new FormData();
-		formData.append('units', fullRefuelShipBtn.dataset.units);
+		formData.append('units', $thisBtn.dataset.fuelUnits);
 		fetchUrl(
-			`/my/ships/${shipSymbol}/refuel`,
+			`${MYSHIP_URL}/refuel`,
 			{
 				formData: formData,
 				successFn: () => {
@@ -85,89 +76,78 @@ document.querySelectorAll("#refuel-ship").forEach(fullRefuelShipBtn => {
 				},
 				errFn: (err) => {
 					alert(err);
-					fullRefuelShipBtn.innerHTML = btnIcon + ' Refuel';
-					fullRefuelShipBtn.disabled = false;
+					btnDefault($thisBtn);
 				}
 			});
 	});
 });
 
-function miningCooldown(btn, remainingSeconds) {
+function miningCooldown($btn, remainingSeconds) {
 	let
-		btnIconMineCart = btn.querySelectorAll('i')[0],
-		btnIconCooldown = btnIconMineCart.cloneNode(true);
-	btnIconCooldown.classList.remove("bi-minecart-loaded");
-	btn.classList.remove("btn-primary");
-	btnIconCooldown.classList.add("bi-clock-history");
-	btn.classList.add("btn-warning");
-	btn.innerHTML = btnIconCooldown.outerHTML + ' Extracting (' + remainingSeconds + 's)';
+		$btnIconMineCart = $btn.querySelectorAll('i')[0],
+		$btnIconCooldown = $btnIconMineCart.cloneNode(true);
+	$btnIconCooldown.classList.remove("bi-minecart-loaded");
+	$btn.classList.remove("btn-primary");
+	$btnIconCooldown.classList.add("bi-clock-history");
+	$btn.classList.add("btn-warning");
+	$btn.innerHTML = $btnIconCooldown.outerHTML + ' Extracting (' + remainingSeconds + 's)';
 
 	let countdown = setInterval(() => {
-		btn.innerHTML = btnIconCooldown.outerHTML + ' Extracting (' + --remainingSeconds + 's)';
+		$btn.innerHTML = $btnIconCooldown.outerHTML + ' Extracting (' + --remainingSeconds + 's)';
 		if (remainingSeconds === 0) {
-			btn.disabled = false;
-			btn.innerHTML = btnIconCooldown.outerHTML + ' Extract';
+			$btn.disabled = false;
+			$btn.innerHTML = $btnIconCooldown.outerHTML + ' Extract';
 			clearInterval(countdown);
 		}
 	}, 1000);
 
 	setTimeout(() => {
-		btn.classList.remove("btn-warning");
-		btn.classList.add("btn-primary");
-		btn.disabled = false;
-		btn.innerHTML = btnIconMineCart.outerHTML + ' Extract';
+		$btn.classList.remove("btn-warning");
+		$btn.classList.add("btn-primary");
+		$btn.disabled = false;
+		$btn.innerHTML = $btnIconMineCart.outerHTML + ' Extract';
 	}, (remainingSeconds * 1000));
 }
 
-document.querySelectorAll("#extract-minerals").forEach(extractResourcesBtn => {
-	extractResourcesBtn.addEventListener('click', function () {
-		let btnIcon = extractResourcesBtn.querySelectorAll('i')[0].outerHTML;
-		extractResourcesBtn.innerHTML = btnIcon + ' Extracting...';
-		extractResourcesBtn.disabled = true;
+document.querySelectorAll("#extract-minerals").forEach($thisBtn => {
+	$thisBtn.addEventListener('click', function () {
+		btnAction($thisBtn);
 
 		fetchUrl(
-			`/my/ships/${shipSymbol}/extract`,
+			`${MYSHIP_URL}/extract`,
 			{
 				successFn: (respJson) => {
 					document.querySelectorAll('#ship-cargo-units')[0].textContent = respJson.cargo.units;
-					miningCooldown(extractResourcesBtn, respJson.cooldown.remainingSeconds);
+					miningCooldown($thisBtn, respJson.cooldown.remainingSeconds);
 				},
 				failFn: (respJson) => {
-					miningCooldown(extractResourcesBtn, respJson.error.data.cooldown.remainingSeconds);
+					miningCooldown($thisBtn, respJson.error.data.cooldown.remainingSeconds);
 				},
 				errFn: (err) => {
 					alert(err);
-					extractResourcesBtn.innerHTML = btnIcon + ' Extract';
-					extractResourcesBtn.disabled = false;
+					btnDefault($thisBtn);
 				}
 			});
 	});
 });
 
-document.querySelectorAll(".sell-cargo").forEach(sellCargoBtn => {
-	let
-		goodsSymbol = sellCargoBtn.dataset.goodsSymbol,
-		goodsUnits = sellCargoBtn.dataset.goodsUnits;
-
-	sellCargoBtn.addEventListener('click', function () {
-		let btnIcon = sellCargoBtn.querySelectorAll('i')[0].outerHTML;
-		sellCargoBtn.innerHTML = btnIcon + ' Selling...';
-		sellCargoBtn.disabled = true;
+document.querySelectorAll(".sell-cargo").forEach($thisBtn => {
+	$thisBtn.addEventListener('click', function () {
+		btnAction($thisBtn);
 
 		let formData = new FormData();
-		formData.append('symbol', goodsSymbol);
-		formData.append('units', goodsUnits);
+		formData.append('symbol', $thisBtn.dataset.goodsSymbol);
+		formData.append('units', $thisBtn.dataset.goodsUnits);
 		fetchUrl(
-			`/my/ships/${shipSymbol}/sell`,
+			`${MYSHIP_URL}/sell`,
 			{
 				formData: formData,
 				successFn: (respJson) => {
-					sellCargoBtn.closest('li').remove()
+					$thisBtn.closest('li').remove()
 				},
 				errFn: (err) => {
 					alert(err);
-					sellCargoBtn.innerHTML = btnIcon + ' Sell';
-					sellCargoBtn.disabled = false;
+					btnDefault($thisBtn);
 				}
 			});
 	});

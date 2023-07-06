@@ -10,9 +10,9 @@
 			<h3 class="fs-2 text-body-emphasis"><a href="/my/ships/{{ .Symbol }}">{{ .Symbol }}</a></h3>
 			<div>
 				{{ if eq .Nav.Status "DOCKED" }}
-				<button id="orbit-ship" class="btn btn-primary"><i class="bi bi-box-arrow-up"></i> Orbit</button>
+				<button id="orbit-ship" class="btn btn-primary" data-action="Orbiting..."><i class="bi bi-box-arrow-up"></i> Orbit</button>
 				{{ else if eq .Nav.Status "IN_ORBIT" }}
-				<button id="dock-ship" class="btn btn-primary"><i class="bi bi-box-arrow-in-down"></i> Dock</button>
+				<button id="dock-ship" class="btn btn-primary" data-action="Docking..."><i class="bi bi-box-arrow-in-down"></i> Dock</button>
 				{{ end }}
 			</div>
 			<div>
@@ -58,13 +58,13 @@
 					{{ if or (eq $.Ship.Nav.Status "DOCKED") (eq $.Ship.Nav.Status "IN_ORBIT") }}
 					<div class="btn-group" role="group">
 						{{ if and (eq $.Ship.Nav.Status "IN_ORBIT") (wpHasTrait .Traits "MINERAL_DEPOSITS") }}
-						<button id="extract-minerals" class="btn btn-primary">
+						<button id="extract-minerals" class="btn btn-primary" data-action="Extracting...">
 							<i class="bi bi-minecart-loaded"></i>
 							Extract
 						</button>
 						{{ end }}
 						{{ if and (eq $.Ship.Nav.Status "DOCKED") $.Context.CanRefuel }}
-						<button id="refuel-ship" class="btn btn-success" data-fuel-units="0">
+						<button id="refuel-ship" class="btn btn-success" data-action="Refueling..." data-fuel-units="0">
 							<i class="bi bi-fuel-pump"></i>
 							Refuel
 						</button>
@@ -126,7 +126,7 @@
 						)
 					) }}
 					<div class="btn-group">
-						<button class="btn btn-primary navigate-ship" data-waypoint-symbol="{{ .Symbol }}">
+						<button class="btn btn-primary navigate-ship" data-action="Navigating..." data-waypoint-symbol="{{ .Symbol }}">
 							<i class='bi
 								{{ if eq .Type "MOON" }}
 									bi-moon
