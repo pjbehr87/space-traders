@@ -53,6 +53,31 @@ func NewFleetController(e *echo.Echo, sta *stapi.APIClient) {
 	e.POST("/my/ships/:shipSymbol/sell", cont.sellCargo)
 }
 
+// /////////////////////
+// Ship Actions
+// /////////////////////
+func (ctl *fleetController) navigateShip(c echo.Context) error {
+	shipSymbol := c.Param("shipSymbol")
+	waypointSymbol := c.FormValue("waypointSymbol")
+	navShipReq := *stapi.NewNavigateShipRequest(waypointSymbol)
+	navigateShipResp, resp, err := ctl.sta.FleetApi.NavigateShip(c.Request().Context(), shipSymbol).NavigateShipRequest(navShipReq).Execute()
+	if err != nil {
+		errMsg, err := io.ReadAll(resp.Body)
+		if err != nil {
+			c.Logger().Error(err.Error())
+			return c.String(http.StatusBadRequest, err.Error())
+		}
+		errMsgS := string(errMsg)
+		c.Logger().Error(errMsgS)
+		return c.String(http.StatusBadRequest, string(errMsgS))
+	}
+
+	err = c.JSON(http.StatusOK, navigateShipResp.Data)
+	if err != nil {
+		c.Logger().Error(err.Error())
+	}
+	return err
+}
 func (ctl *fleetController) purchaseShip(c echo.Context) error {
 	shipType, err := stapi.NewShipTypeFromValue(c.FormValue("shipType"))
 	if err != nil {
@@ -65,14 +90,19 @@ func (ctl *fleetController) purchaseShip(c echo.Context) error {
 	c.Logger().Debug(*shipType, waypointSymbol)
 
 	purchaseShipReq := *stapi.NewPurchaseShipRequest(*shipType, waypointSymbol)
-	_, resp, err := ctl.sta.FleetApi.PurchaseShip(c.Request().Context()).PurchaseShipRequest(purchaseShipReq).Execute()
+	purchaseShipResp, resp, err := ctl.sta.FleetApi.PurchaseShip(c.Request().Context()).PurchaseShipRequest(purchaseShipReq).Execute()
 	if err != nil {
-		errBody, _ := io.ReadAll(resp.Body)
-		c.Logger().Error(string(errBody))
-		return c.String(http.StatusBadRequest, string(errBody))
+		errMsg, err := io.ReadAll(resp.Body)
+		if err != nil {
+			c.Logger().Error(err.Error())
+			return c.String(http.StatusBadRequest, err.Error())
+		}
+		errMsgS := string(errMsg)
+		c.Logger().Error(errMsgS)
+		return c.String(http.StatusBadRequest, string(errMsgS))
 	}
 
-	err = c.NoContent(http.StatusOK)
+	err = c.JSON(http.StatusOK, purchaseShipResp.Data)
 	if err != nil {
 		c.Logger().Error(err.Error())
 	}
@@ -80,13 +110,19 @@ func (ctl *fleetController) purchaseShip(c echo.Context) error {
 }
 func (ctl *fleetController) orbitShip(c echo.Context) error {
 	shipSymbol := c.Param("shipSymbol")
-	_, _, err := ctl.sta.FleetApi.OrbitShip(c.Request().Context(), shipSymbol).Execute()
+	orbitShipResp, resp, err := ctl.sta.FleetApi.OrbitShip(c.Request().Context(), shipSymbol).Execute()
 	if err != nil {
-		c.Logger().Error(err.Error())
-		return c.String(http.StatusBadRequest, err.Error())
+		errMsg, err := io.ReadAll(resp.Body)
+		if err != nil {
+			c.Logger().Error(err.Error())
+			return c.String(http.StatusBadRequest, err.Error())
+		}
+		errMsgS := string(errMsg)
+		c.Logger().Error(errMsgS)
+		return c.String(http.StatusBadRequest, string(errMsgS))
 	}
 
-	err = c.NoContent(http.StatusOK)
+	err = c.JSON(http.StatusOK, orbitShipResp.Data)
 	if err != nil {
 		c.Logger().Error(err.Error())
 	}
@@ -94,13 +130,19 @@ func (ctl *fleetController) orbitShip(c echo.Context) error {
 }
 func (ctl *fleetController) dockShip(c echo.Context) error {
 	shipSymbol := c.Param("shipSymbol")
-	_, _, err := ctl.sta.FleetApi.DockShip(c.Request().Context(), shipSymbol).Execute()
+	dockShipResp, resp, err := ctl.sta.FleetApi.DockShip(c.Request().Context(), shipSymbol).Execute()
 	if err != nil {
-		c.Logger().Error(err.Error())
-		return c.String(http.StatusBadRequest, err.Error())
+		errMsg, err := io.ReadAll(resp.Body)
+		if err != nil {
+			c.Logger().Error(err.Error())
+			return c.String(http.StatusBadRequest, err.Error())
+		}
+		errMsgS := string(errMsg)
+		c.Logger().Error(errMsgS)
+		return c.String(http.StatusBadRequest, string(errMsgS))
 	}
 
-	err = c.NoContent(http.StatusOK)
+	err = c.JSON(http.StatusOK, dockShipResp.Data)
 	if err != nil {
 		c.Logger().Error(err.Error())
 	}
@@ -119,14 +161,20 @@ func (ctl *fleetController) refuelShip(c echo.Context) error {
 		refuelShipRequest.SetUnits(int32(fuelUnitsI))
 	}
 	shipSymbol := c.Param("shipSymbol")
-	refuelResp, _, err := ctl.sta.FleetApi.RefuelShip(c.Request().Context(), shipSymbol).RefuelShipRequest(refuelShipRequest).Execute()
+	refuelShipResp, resp, err := ctl.sta.FleetApi.RefuelShip(c.Request().Context(), shipSymbol).RefuelShipRequest(refuelShipRequest).Execute()
 	if err != nil {
-		c.Logger().Error(err.Error())
-		return c.String(http.StatusBadRequest, err.Error())
+		errMsg, err := io.ReadAll(resp.Body)
+		if err != nil {
+			c.Logger().Error(err.Error())
+			return c.String(http.StatusBadRequest, err.Error())
+		}
+		errMsgS := string(errMsg)
+		c.Logger().Error(errMsgS)
+		return c.String(http.StatusBadRequest, string(errMsgS))
 	}
-	c.Logger().Debug("Refuel\n%+v", refuelResp)
+	c.Logger().Debug("Refuel\n%+v", refuelShipResp)
 
-	err = c.JSON(http.StatusOK, refuelResp.Data)
+	err = c.JSON(http.StatusOK, refuelShipResp.Data)
 	if err != nil {
 		c.Logger().Error(err.Error())
 	}
@@ -135,20 +183,20 @@ func (ctl *fleetController) refuelShip(c echo.Context) error {
 func (ctl *fleetController) extractResources(c echo.Context) error {
 	shipSymbol := c.Param("shipSymbol")
 	extractResourcesRequest := *stapi.NewExtractResourcesRequest()
-	extractResp, resp, err := ctl.sta.FleetApi.ExtractResources(c.Request().Context(), shipSymbol).ExtractResourcesRequest(extractResourcesRequest).Execute()
+	extractResourceResp, resp, err := ctl.sta.FleetApi.ExtractResources(c.Request().Context(), shipSymbol).ExtractResourcesRequest(extractResourcesRequest).Execute()
 	if err != nil {
 		errMsg, err := io.ReadAll(resp.Body)
-		errMsgS := string(errMsg)
 		if err != nil {
-			c.Logger().Error(errMsgS)
-			return c.String(http.StatusBadRequest, string(errMsgS))
+			c.Logger().Error(err.Error())
+			return c.String(http.StatusBadRequest, err.Error())
 		}
+		errMsgS := string(errMsg)
 		c.Logger().Error(errMsgS)
-		return c.String(http.StatusBadRequest, string(errMsgS))
+		return c.String(http.StatusBadRequest, errMsgS)
 	}
-	c.Logger().Debug(fmt.Sprintf("ExtractResources\n%+v", extractResp.Data))
+	c.Logger().Debug(fmt.Sprintf("ExtractResources\n%+v", extractResourceResp.Data))
 
-	err = c.JSON(http.StatusOK, extractResp.Data)
+	err = c.JSON(http.StatusOK, extractResourceResp.Data)
 	if err != nil {
 		c.Logger().Error(err.Error())
 	}
@@ -168,26 +216,29 @@ func (ctl *fleetController) sellCargo(c echo.Context) error {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
 	sellCargoRequest := *stapi.NewSellCargoRequest(*goodsSymbolE, int32(goodsUnits))
-	sellCargo, resp, err := ctl.sta.FleetApi.SellCargo(c.Request().Context(), shipSymbol).SellCargoRequest(sellCargoRequest).Execute()
+	sellCargoResp, resp, err := ctl.sta.FleetApi.SellCargo(c.Request().Context(), shipSymbol).SellCargoRequest(sellCargoRequest).Execute()
 	if err != nil {
 		errMsg, err := io.ReadAll(resp.Body)
 		errMsgS := string(errMsg)
 		if err != nil {
-			c.Logger().Error(errMsgS)
+			c.Logger().Error(err.Error())
 			return c.String(http.StatusBadRequest, string(errMsgS))
 		}
 		c.Logger().Error(errMsgS)
 		return c.String(http.StatusBadRequest, string(errMsgS))
 	}
-	c.Logger().Debug(fmt.Sprintf("SellCargo\n%+v", sellCargo.Data))
+	c.Logger().Debug(fmt.Sprintf("SellCargo\n%+v", sellCargoResp.Data))
 
-	err = c.JSON(http.StatusOK, sellCargo.Data)
+	err = c.JSON(http.StatusOK, sellCargoResp.Data)
 	if err != nil {
 		c.Logger().Error(err.Error())
 	}
 	return err
 }
 
+// /////////////////////
+// Fleet Management
+// /////////////////////
 func (ctl *fleetController) listShips(c echo.Context) error {
 	c.Logger().Info("Request: LIST Ships")
 
@@ -272,23 +323,6 @@ func (ctl *fleetController) getShip(c echo.Context) error {
 		SysWps:      sysWps,
 		MarketGoods: marketGoods,
 	})
-	if err != nil {
-		c.Logger().Error(err.Error())
-	}
-	return err
-}
-
-func (ctl *fleetController) navigateShip(c echo.Context) error {
-	shipSymbol := c.Param("shipSymbol")
-	waypointSymbol := c.FormValue("waypointSymbol")
-	navShipReq := *stapi.NewNavigateShipRequest(waypointSymbol)
-	_, _, err := ctl.sta.FleetApi.NavigateShip(c.Request().Context(), shipSymbol).NavigateShipRequest(navShipReq).Execute()
-	if err != nil {
-		c.Logger().Error(err.Error())
-		return c.String(http.StatusBadRequest, err.Error())
-	}
-
-	err = c.NoContent(http.StatusOK)
 	if err != nil {
 		c.Logger().Error(err.Error())
 	}

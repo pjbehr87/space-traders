@@ -54,58 +54,56 @@
 			<h1>Current Waypoint</h1>
 			<div class="row g-2 py-2">
 				<div class="col-6">
-					<div>
-						<h3 class="fs-2 text-body-emphasis">{{ .Symbol }}</h3>
-						{{ if or (eq $.Ship.Nav.Status "DOCKED") (eq $.Ship.Nav.Status "IN_ORBIT") }}
-						<div class="btn-group" role="group">
-							{{ if and (eq $.Ship.Nav.Status "IN_ORBIT") (wpHasTrait .Traits "MINERAL_DEPOSITS") }}
-							<button id="extract-minerals" class="btn btn-primary">
-								<i class="bi bi-minecart-loaded"></i>
-								Extract
-							</button>
-							{{ end }}
-							{{ if and (eq $.Ship.Nav.Status "DOCKED") $.Context.CanRefuel }}
-							<button id="refuel-ship" class="btn btn-success" data-fuel-units="0">
-								<i class="bi bi-fuel-pump"></i>
-								Refuel
-							</button>
-							{{ end }}
-						</div>
+					<h3 class="fs-2 text-body-emphasis">{{ .Symbol }}</h3>
+					{{ if or (eq $.Ship.Nav.Status "DOCKED") (eq $.Ship.Nav.Status "IN_ORBIT") }}
+					<div class="btn-group" role="group">
+						{{ if and (eq $.Ship.Nav.Status "IN_ORBIT") (wpHasTrait .Traits "MINERAL_DEPOSITS") }}
+						<button id="extract-minerals" class="btn btn-primary">
+							<i class="bi bi-minecart-loaded"></i>
+							Extract
+						</button>
 						{{ end }}
-						<div>
-							<strong>Type:</strong> {{ .Type }}
-						</div>
-						<div>
-							<strong>Orbitals:</strong>
-							{{ if .Orbitals }}
-							<ul>
-								{{ range .Orbitals }}
-								<li>
-									{{ .Symbol }}
-								</li>
-								{{ end }}
-							</ul>
-							{{ else }}
-							None
+						{{ if and (eq $.Ship.Nav.Status "DOCKED") $.Context.CanRefuel }}
+						<button id="refuel-ship" class="btn btn-success" data-fuel-units="0">
+							<i class="bi bi-fuel-pump"></i>
+							Refuel
+						</button>
+						{{ end }}
+					</div>
+					{{ end }}
+					<div>
+						<strong>Type:</strong> {{ .Type }}
+					</div>
+					<div>
+						<strong>Orbitals:</strong>
+						{{ if .Orbitals }}
+						<ul>
+							{{ range .Orbitals }}
+							<li>
+								{{ .Symbol }}
+							</li>
 							{{ end }}
-						</div>
-						<div>
-							<strong>Faction:</strong> {{ .Faction.Symbol }}
-						</div>
-						<div>
-							<strong>Traits:</strong>
-							{{ if .Traits }}
-							<ul>
-								{{ range .Traits }}
-								<li>
-									<span class="link-dark" data-toggle="tooltip" title="{{ .Description }}">{{ .Symbol }}</span>
-								</li>
-								{{ end }}
-							</ul>
-							{{ else }}
-							None
+						</ul>
+						{{ else }}
+						None
+						{{ end }}
+					</div>
+					<div>
+						<strong>Faction:</strong> {{ .Faction.Symbol }}
+					</div>
+					<div>
+						<strong>Traits:</strong>
+						{{ if .Traits }}
+						<ul>
+							{{ range .Traits }}
+							<li>
+								<span class="link-dark" data-toggle="tooltip" title="{{ .Description }}">{{ .Symbol }}</span>
+							</li>
 							{{ end }}
-						</div>
+						</ul>
+						{{ else }}
+						None
+						{{ end }}
 					</div>
 				</div>
 			</div>
