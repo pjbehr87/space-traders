@@ -1,7 +1,7 @@
 'use strict';
 
 const 
-	SHIP_SYMBOL = document.querySelectorAll("#ship-symbol")[0].value;
+	SHIP_SYMBOL = document.querySelectorAll("#ship-symbol")[0].value,
 	MYSHIP_URL = `/my/ships/${SHIP_SYMBOL}`;
 
 document.querySelectorAll("#orbit-ship").forEach($thisBtn => {

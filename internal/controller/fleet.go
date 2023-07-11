@@ -23,17 +23,19 @@ type shipsPage struct {
 }
 
 type shipContext struct {
-	CanRefuel bool
-	FuelPrice *int
+	CanRefuel    bool
+	FuelPrice    *int32
+	AgentCredits int64
 }
 type shipPage struct {
 	Page PageData
 
-	Ship        stapi.Ship
-	Context     shipContext
-	CurWp       *stapi.Waypoint
-	SysWps      *[]stapi.Waypoint
-	MarketGoods *[]stapi.MarketTradeGood
+	Ship          stapi.Ship
+	Context       shipContext
+	CurWp         *stapi.Waypoint
+	SysWps        *[]stapi.Waypoint
+	MarketGoods   *[]stapi.MarketTradeGood
+	ShipyardShips *[]stapi.ShipyardShip
 }
 
 func NewFleetController(e *echo.Echo, sta *stapi.APIClient) {
@@ -278,37 +280,55 @@ func (ctl *fleetController) getShip(c echo.Context) error {
 	}
 	waypoints := waypointsResp.Data
 
+	agentResp, _, err := ctl.sta.AgentsApi.GetMyAgent(c.Request().Context()).Execute()
+	if err != nil {
+		c.Logger().Error(err.Error())
+		return c.String(http.StatusBadRequest, err.Error())
+	}
+	agent := agentResp.Data
+
 	shipContext := shipContext{}
+	shipContext.AgentCredits = agent.Credits
 	var curWp *stapi.Waypoint
 	var sysWps *[]stapi.Waypoint
 	var marketGoods *[]stapi.MarketTradeGood
-	if ship.Nav.Status != stapi.SHIPNAVSTATUS_IN_TRANSIT {
-		// Capture the current WP and remove it from the "all waypoints" list
-		for i, wp := range waypoints {
-			if wp.Symbol == wpSymbol {
-				curWp = &wp
-				waypoints = append(waypoints[:i], waypoints[:i+1]...)
-				break
-			}
+	var shipyardShips *[]stapi.ShipyardShip
+
+	// Capture the current WP and remove it from the "all waypoints" list
+	for i, wp := range waypoints {
+		if wp.Symbol == wpSymbol {
+			curWp = &wp
+			waypoints = append(waypoints[:i], waypoints[i+1:]...)
+			break
 		}
-		if ship.Nav.Status == stapi.SHIPNAVSTATUS_DOCKED && service.WpHasMarketplace(*curWp) {
+	}
+	switch ship.Nav.Status {
+	// If the ship is docked, show context info based on WP traits
+	// We don't need to show the system waypoints
+	case stapi.SHIPNAVSTATUS_DOCKED:
+		if service.WpHasMarketplace(*curWp) {
 			marketGoodsResp, _, err := ctl.sta.SystemsApi.GetMarket(c.Request().Context(), sysSymbol, wpSymbol).Execute()
 			if err != nil {
 				c.Logger().Error(err.Error())
 				return c.String(http.StatusBadRequest, err.Error())
 			}
-			waypoints = nil
 			marketGoods = &marketGoodsResp.Data.TradeGoods
 			shipContext.CanRefuel, shipContext.FuelPrice = service.MarketHasFuel(marketGoodsResp.Data)
 		}
-		if ship.Nav.Status == stapi.SHIPNAVSTATUS_IN_ORBIT {
-			sysWps = &waypoints
+		if service.WpHasShipyard(*curWp) {
+			shipyardResp, _, err := ctl.sta.SystemsApi.GetShipyard(c.Request().Context(), sysSymbol, wpSymbol).Execute()
+			if err != nil {
+				c.Logger().Error(err.Error())
+				return c.String(http.StatusBadRequest, err.Error())
+			}
+			shipyardShips = &shipyardResp.Data.Ships
 		}
-	} else {
+	// If the ship is in orbit or in transit show the system waypoints
+	case stapi.SHIPNAVSTATUS_IN_ORBIT, stapi.SHIPNAVSTATUS_IN_TRANSIT:
 		sysWps = &waypoints
 	}
 
-	c.Logger().Debugf("Data: Ship\n%+v\nContext\n%+v\nCurrentWp\n%+v\nWaypoints\n%+v\nMarketGoods\n%+v", ship, shipContext, curWp, sysWps, marketGoods)
+	c.Logger().Debugf("Data: Ship\n%+v\nContext\n%+v\nCurrentWp\n%+v\nWaypoints\n%+v\nMarketGoods\n%+v\nShipyardShips\n%+v", ship, shipContext, curWp, sysWps, marketGoods, shipyardShips)
 
 	err = c.Render(http.StatusOK, "ship", shipPage{
 		Page: PageData{
@@ -317,11 +337,12 @@ func (ctl *fleetController) getShip(c echo.Context) error {
 				"ship",
 			},
 		},
-		Ship:        ship,
-		Context:     shipContext,
-		CurWp:       curWp,
-		SysWps:      sysWps,
-		MarketGoods: marketGoods,
+		Ship:          ship,
+		Context:       shipContext,
+		CurWp:         curWp,
+		SysWps:        sysWps,
+		MarketGoods:   marketGoods,
+		ShipyardShips: shipyardShips,
 	})
 	if err != nil {
 		c.Logger().Error(err.Error())

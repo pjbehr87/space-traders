@@ -50,10 +50,10 @@
 	{{ end }}
 	<div class="col-8">
 		<div class="container">
-			{{ with .CurWp }}
-			<h1>Current Waypoint</h1>
 			<div class="row g-2 py-2">
 				<div class="col-6">
+					{{ with .CurWp }}
+					<h1>Current Waypoint</h1>
 					<h3 class="fs-2 text-body-emphasis">{{ .Symbol }}</h3>
 					{{ if or (eq $.Ship.Nav.Status "DOCKED") (eq $.Ship.Nav.Status "IN_ORBIT") }}
 					<div class="btn-group" role="group">
@@ -105,13 +105,19 @@
 						None
 						{{ end }}
 					</div>
+					{{ else }}
+					In Transit
+					{{ end }}
+				</div>
+				<div class="col-6">
+					<h1>Info</h1>
+					<div>
+						<strong>AgentCredits:</strong> <i class="bi-currency-bitcoin"></i><span id="agent-credits">{{ i64Commas .Context.AgentCredits }}</span>
+					</div>
 				</div>
 			</div>
-			{{ else }}
-			<h3>In Transit</h3>
-			{{ end }}
-			<hr class="hr">
 			{{ if .SysWps }}
+			<hr class="hr">
 			<h1>System Waypoints</h1>
 			<div class="row g-2 py-2">
 				{{ range .SysWps }}
@@ -143,7 +149,7 @@
 								{{ else }}
 									bi-question-circle
 								{{ end }}'></i>
-							Navigate
+							Navigate ({{ ptDist $.CurWp.X $.CurWp.Y .X .Y }}u)
 						</button>
 					</div>
 					{{ end }}
@@ -186,6 +192,7 @@
 			</div>
 			{{ end }}
 			{{ if .MarketGoods }}
+			<hr class="hr">
 			<h1>Market Goods</h1>
 			<div class="row g-2 py-2">
 				{{ range .MarketGoods }}
@@ -201,6 +208,50 @@
 					</div>
 					<div>
 						<strong>Sell:</strong> {{ .SellPrice }}
+					</div>
+				</div>
+				{{ end }}
+			</div>
+			{{ end }}
+			{{ if .ShipyardShips }}
+			<hr class="hr">
+			<h1>Shipyard Ships</h1>
+			<div class="row g-2 py-2">
+				{{ range .ShipyardShips }}
+				<div class="col-6">
+					<h3 class="fs-2 text-body-emphasis">{{ .Name }}</h3>
+					<div>
+						<button class="btn btn-primary purchase-ship"
+							disabled="{{ if lt .PurchasePrice $.Context.AgentCredits }}true{{ else }}false{{ end }}"
+							data-action="Purchasing..."
+							data-ship-type="{{ .Type }}"
+							data-waypoint-symbol="{{ $.CurWp.Symbol }}">
+							<i class="bi-currency-exchange"></i> Purchase
+						</button>
+					</div>
+					<div>
+						<strong>Type:</strong> {{ .Type }}
+					</div>
+					<div>
+						<strong>Description:</strong> {{ .Description }}
+					</div>
+					<div>
+						<strong>Price:</strong> <span class="{{ if gt .PurchasePrice $.Context.AgentCredits }}text-danger{{ end }}"><i class="bi-currency-bitcoin"></i>{{ i32Commas .PurchasePrice }}</span>
+					</div>
+					<div>
+						{{ template "shipFrame" .Frame }}
+					</div>
+					<div>
+						{{ template "shipReactor" .Reactor }}
+					</div>
+					<div>
+						{{ template "shipEngine" .Engine }}
+					</div>
+					<div>
+						{{ template "shipModules" .Modules }}
+					</div>
+					<div>
+						{{ template "shipMounts" .Mounts }}
 					</div>
 				</div>
 				{{ end }}

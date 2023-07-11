@@ -10,11 +10,19 @@ func WpHasMarketplace(wp stapi.Waypoint) bool {
 	}
 	return false
 }
+func WpHasShipyard(wp stapi.Waypoint) bool {
+	for _, trait := range wp.Traits {
+		if trait.Symbol == "SHIPYARD" {
+			return true
+		}
+	}
+	return false
+}
 
-func MarketHasFuel(market stapi.Market) (bool, *int) {
+func MarketHasFuel(market stapi.Market) (bool, *int32) {
 	for _, good := range market.TradeGoods {
 		if good.Symbol == "FUEL" {
-			price := int(good.PurchasePrice)
+			price := good.PurchasePrice
 			return true, &price
 		}
 	}

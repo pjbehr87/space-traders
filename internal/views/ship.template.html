@@ -198,9 +198,11 @@ None
 	<div>
 		<strong>Description:</strong> {{ .Description }}
 	</div>
+	{{ if .Condition }}
 	<div>
 		<strong>Condition:</strong> {{ .Condition }}
 	</div>
+	{{ end }}
 	<div>
 		<strong>ModuleSlots:</strong> {{ .ModuleSlots }}
 	</div>
@@ -228,9 +230,11 @@ None
 	<div>
 		<strong>Description:</strong> {{ .Description }}
 	</div>
+	{{ if .Condition }}
 	<div>
 		<strong>Condition:</strong> {{ .Condition }}
 	</div>
+	{{ end }}
 	<div>
 		<strong>PowerOutput:</strong> {{ .PowerOutput }}
 	</div>

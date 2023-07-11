@@ -20,7 +20,7 @@
 				<strong>Description:</strong> {{ .Description }}
 			</div>
 			<div>
-				<strong>Price:</strong> {{ .PurchasePrice }}
+				<strong>Price:</strong> {{ i32Commas .PurchasePrice }}
 			</div>
 			<div>
 				{{ template "shipFrame" .Frame }}
