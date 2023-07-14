@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"io"
 	"io/fs"
+	"math"
 	"os"
 	"strings"
 	"time"
@@ -13,6 +14,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	stapi "github.com/pjbehr87/space-traders/st-api"
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
 	"gopkg.in/yaml.v3"
 
 	"github.com/labstack/gommon/log"
@@ -62,6 +65,18 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Con
 
 func TemplateFunctions() template.FuncMap {
 	return template.FuncMap{
+		"ptDist": func(x1 int32, y1 int32, x2 int32, y2 int32) string {
+			dist := math.Sqrt(math.Pow(float64(x2-x1), 2) + math.Pow(float64(y2-y1), 2))
+			return fmt.Sprintf("%.2f", dist)
+		},
+		"i64Commas": func(i int64) string {
+			p := message.NewPrinter(language.English)
+			return p.Sprintf("%d\n", i)
+		},
+		"i32Commas": func(i int32) string {
+			p := message.NewPrinter(language.English)
+			return p.Sprintf("%d\n", i)
+		},
 		"wpHasTrait": func(traits []stapi.WaypointTrait, search string) bool {
 			for _, trait := range traits {
 				if trait.Symbol == search {
