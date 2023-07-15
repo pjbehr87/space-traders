@@ -1,8 +1,8 @@
-document.querySelectorAll(".accept-contract").forEach($thisBtn => {
-	acceptBtn.addEventListener('click', function () {
-		btnAction($thisBtn);
+document.querySelectorAll(".accept-contract").forEach($acceptBtn => {
+	$acceptBtn.addEventListener('click', function () {
+		btnAction($acceptBtn);
 
-		let contractId = $thisBtn.dataset.contractId
+		let contractId = $acceptBtn.dataset.contractId
 		fetchUrl(
 			`/my/contracts/${contractId}/accept`,
 			{
@@ -11,7 +11,7 @@ document.querySelectorAll(".accept-contract").forEach($thisBtn => {
 				},
 				errFn: (err) => {
 					alert(err);
-					btnDefault($thisBtn);
+					btnDefault($acceptBtn);
 				}
 			});
 	});

@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"io"
 	"net/http"
+	"strconv"
 
 	stapi "github.com/pjbehr87/space-traders/st-api"
 
@@ -27,6 +29,7 @@ func NewContractsController(e *echo.Echo, sta *stapi.APIClient) {
 	e.GET("/my/contracts", cont.listContracts)
 	e.GET("/my/contracts/:contractId", cont.getContract)
 	e.POST("/my/contracts/:contractId/accept", cont.acceptContract)
+	e.POST("/my/contracts/:contractId/deliver", cont.deliverContract)
 }
 
 func (ctl *contractsController) listContracts(c echo.Context) error {
@@ -81,6 +84,36 @@ func (ctl *contractsController) acceptContract(c echo.Context) error {
 	}
 
 	err = c.NoContent(http.StatusOK)
+	if err != nil {
+		c.Logger().Error(err.Error())
+	}
+	return err
+}
+
+func (ctl *contractsController) deliverContract(c echo.Context) error {
+	contractId := c.Param("contractId")
+	shipSymbol := c.FormValue("shipSymbol")
+	tradeSymbol := c.FormValue("tradeSymbol")
+	units := c.FormValue("units")
+	unitsI, err := strconv.Atoi(units)
+	if err != nil {
+		c.Logger().Error(err.Error())
+		return c.String(http.StatusBadRequest, err.Error())
+	}
+	contractDeliverReq := *stapi.NewDeliverContractRequest(shipSymbol, tradeSymbol, int32(unitsI))
+	contractDeliverResp, resp, err := ctl.sta.ContractsApi.DeliverContract(c.Request().Context(), contractId).DeliverContractRequest(contractDeliverReq).Execute()
+	if err != nil {
+		errMsg, err := io.ReadAll(resp.Body)
+		if err != nil {
+			c.Logger().Error(err.Error())
+			return c.String(http.StatusBadRequest, err.Error())
+		}
+		errMsgS := string(errMsg)
+		c.Logger().Error(errMsgS)
+		return c.String(http.StatusBadRequest, string(errMsgS))
+	}
+
+	err = c.JSON(http.StatusOK, contractDeliverResp.Data)
 	if err != nil {
 		c.Logger().Error(err.Error())
 	}

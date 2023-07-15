@@ -3,7 +3,9 @@
 const 
 	SHIP_SYMBOL = document.querySelectorAll("#ship-symbol")[0].value,
 	MYSHIP_URL = `/my/ships/${SHIP_SYMBOL}`;
-
+// ////////////////////
+// Ship controls
+// ////////////////////
 document.querySelectorAll("#orbit-ship").forEach($thisBtn => {
 	$thisBtn.addEventListener('click', function () {
 		btnAction($thisBtn);
@@ -48,27 +50,6 @@ document.querySelectorAll(".navigate-ship").forEach($thisBtn => {
 		formData.append('waypointSymbol', $thisBtn.dataset.waypointSymbol);
 		fetchUrl(
 			`${MYSHIP_URL}/navigate`,
-			{
-				formData: formData,
-				successFn: () => {
-					location.reload();
-				},
-				errFn: (err) => {
-					alert(err);
-					btnDefault($thisBtn);
-				}
-			});
-	});
-});
-
-document.querySelectorAll("#refuel-ship").forEach($thisBtn => {
-	$thisBtn.addEventListener('click', function () {
-		btnAction($thisBtn);
-
-		let formData = new FormData();
-		formData.append('units', $thisBtn.dataset.fuelUnits);
-		fetchUrl(
-			`${MYSHIP_URL}/refuel`,
 			{
 				formData: formData,
 				successFn: () => {
@@ -131,6 +112,30 @@ document.querySelectorAll("#extract-minerals").forEach($thisBtn => {
 	});
 });
 
+// ////////////////////
+// Marketplace
+// ////////////////////
+document.querySelectorAll("#refuel-ship").forEach($thisBtn => {
+	$thisBtn.addEventListener('click', function () {
+		btnAction($thisBtn);
+
+		let formData = new FormData();
+		formData.append('units', $thisBtn.dataset.fuelUnits);
+		fetchUrl(
+			`${MYSHIP_URL}/refuel`,
+			{
+				formData: formData,
+				successFn: () => {
+					location.reload();
+				},
+				errFn: (err) => {
+					alert(err);
+					btnDefault($thisBtn);
+				}
+			});
+	});
+});
+
 document.querySelectorAll(".sell-cargo").forEach($thisBtn => {
 	$thisBtn.addEventListener('click', function () {
 		btnAction($thisBtn);
@@ -140,6 +145,59 @@ document.querySelectorAll(".sell-cargo").forEach($thisBtn => {
 		formData.append('units', $thisBtn.dataset.goodsUnits);
 		fetchUrl(
 			`${MYSHIP_URL}/sell`,
+			{
+				formData: formData,
+				successFn: () => {
+					$thisBtn.closest('li').remove()
+				},
+				errFn: (err) => {
+					alert(err);
+					btnDefault($thisBtn);
+				}
+			});
+	});
+});
+
+// ////////////////////
+// Shipyard
+// ////////////////////
+document.querySelectorAll(".purchase-ship").forEach($thisBtn => {
+	$thisBtn.addEventListener('click', function () {
+		btnAction($thisBtn)
+
+		let formData = new FormData();
+		formData.append('shipType', $thisBtn.dataset.shipType);
+		formData.append('waypointSymbol', $thisBtn.dataset.waypointSymbol);
+		fetchUrl(
+			'/my/ships',
+			{
+				formData: formData,
+				successFn: () => {
+					location.reload();
+				},
+				errFn: (err) => {
+					alert(err);
+					btnDefault($thisBtn);
+				}
+			});
+	});
+});
+
+
+
+document.querySelectorAll(".deliver-cargo").forEach($thisBtn => {
+	$thisBtn.addEventListener('click', function () {
+		btnAction($thisBtn);
+
+		let
+			btnData = $thisBtn.dataset,
+			contractId = $thisBtn,
+			formData = new FormData();
+		formData.append('shipSymbol', btnData.shipSymbol);
+		formData.append('tradeSymbol', btnData.tradeSymbol);
+		formData.append('units', btnData.units);
+		fetchUrl(
+			`/my/contracts/${contractId}/deliver`,
 			{
 				formData: formData,
 				successFn: () => {

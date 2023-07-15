@@ -76,7 +76,9 @@
 				<strong>Expiration:</strong> {{ timeFmt .Expiration }} ({{ timeUntil .Expiration }})
 			</div>
 			
-			<button class="btn btn-primary accept-contract" data-contract-id="{{ .Id }}">Accept</button>
+			<button class="btn btn-primary accept-contract" data-action="Accepting..." data-contract-id="{{ .Id }}">
+				<i class="bi bi-file-earmark-check"></i> Accept
+			</button>
 			{{ end }}
 		</div>
 	</div>

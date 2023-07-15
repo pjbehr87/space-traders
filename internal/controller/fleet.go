@@ -35,6 +35,7 @@ type shipPage struct {
 	CurWp         *stapi.Waypoint
 	SysWps        *[]stapi.Waypoint
 	MarketGoods   *[]stapi.MarketTradeGood
+	Contracts     *[]stapi.Contract
 	ShipyardShips *[]stapi.ShipyardShip
 }
 
@@ -289,10 +290,13 @@ func (ctl *fleetController) getShip(c echo.Context) error {
 
 	shipContext := shipContext{}
 	shipContext.AgentCredits = agent.Credits
-	var curWp *stapi.Waypoint
-	var sysWps *[]stapi.Waypoint
-	var marketGoods *[]stapi.MarketTradeGood
-	var shipyardShips *[]stapi.ShipyardShip
+	var (
+		curWp         *stapi.Waypoint
+		sysWps        *[]stapi.Waypoint
+		marketGoods   *[]stapi.MarketTradeGood
+		contracts     *[]stapi.Contract
+		shipyardShips *[]stapi.ShipyardShip
+	)
 
 	// Capture the current WP and remove it from the "all waypoints" list
 	for i, wp := range waypoints {
@@ -314,6 +318,13 @@ func (ctl *fleetController) getShip(c echo.Context) error {
 			}
 			marketGoods = &marketGoodsResp.Data.TradeGoods
 			shipContext.CanRefuel, shipContext.FuelPrice = service.MarketHasFuel(marketGoodsResp.Data)
+
+			contractsResp, _, err := ctl.sta.ContractsApi.GetContracts(c.Request().Context()).Execute()
+			if err != nil {
+				c.Logger().Error(err.Error())
+				return c.String(http.StatusAccepted, err.Error())
+			}
+			contracts = &contractsResp.Data
 		}
 		if service.WpHasShipyard(*curWp) {
 			shipyardResp, _, err := ctl.sta.SystemsApi.GetShipyard(c.Request().Context(), sysSymbol, wpSymbol).Execute()
@@ -342,6 +353,7 @@ func (ctl *fleetController) getShip(c echo.Context) error {
 		CurWp:         curWp,
 		SysWps:        sysWps,
 		MarketGoods:   marketGoods,
+		Contracts:     contracts,
 		ShipyardShips: shipyardShips,
 	})
 	if err != nil {

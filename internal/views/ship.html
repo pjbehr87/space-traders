@@ -25,7 +25,7 @@
 				{{ template "shipFuel" .Fuel }}
 			</div>
 			<div>
-				{{ template "shipCargo" . }}
+				{{ template "shipCargo" $ }}
 			</div>
 			<div>
 				{{ template "shipCrew" .Crew }}
@@ -222,7 +222,7 @@
 					<h3 class="fs-2 text-body-emphasis">{{ .Name }}</h3>
 					<div>
 						<button class="btn btn-primary purchase-ship"
-							disabled="{{ if lt .PurchasePrice $.Context.AgentCredits }}true{{ else }}false{{ end }}"
+							{{ if gt .PurchasePrice $.Context.AgentCredits }}disabled="true"{{ end }}
 							data-action="Purchasing..."
 							data-ship-type="{{ .Type }}"
 							data-waypoint-symbol="{{ $.CurWp.Symbol }}">

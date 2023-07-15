@@ -65,6 +65,18 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Con
 
 func TemplateFunctions() template.FuncMap {
 	return template.FuncMap{
+		"hasContractForGood": func(contracts *[]stapi.Contract, tradeSymbol string) bool {
+			if contracts != nil {
+				for _, contract := range *contracts {
+					for _, deliver := range contract.Terms.Deliver {
+						if deliver.TradeSymbol == tradeSymbol {
+							return true
+						}
+					}
+				}
+			}
+			return false
+		},
 		"ptDist": func(x1 int32, y1 int32, x2 int32, y2 int32) string {
 			dist := math.Sqrt(math.Pow(float64(x2-x1), 2) + math.Pow(float64(y2-y1), 2))
 			return fmt.Sprintf("%.2f", dist)
