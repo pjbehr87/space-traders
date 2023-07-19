@@ -3,8 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
+	"os/signal"
+	"sync"
+	"syscall"
 
 	stapi "github.com/pjbehr87/space-traders/st-api"
+	stjobs "github.com/pjbehr87/space-traders/st-jobs"
 
 	"github.com/pjbehr87/space-traders/internal"
 	"github.com/pjbehr87/space-traders/internal/controller"
@@ -40,9 +45,25 @@ func main() {
 		}
 	})
 
+	wg := sync.WaitGroup{}
+	exitChan := make(chan bool, 1)
+	stj := stjobs.NewRunner(e, sta, conf.Agent.Token, exitChan, &wg)
+
 	// Add all of the routs and handlers to the server
-	controller.InitRouter(e, sta)
+	controller.InitRouter(e, sta, stj)
+
+	// Set up exit listener to close server and job runner
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		<-sigs
+		e.Logger.Info("Exiting job runner")
+		exitChan <- true
+		wg.Wait()
+		e.Logger.Info("Shutting down server")
+		e.Close()
+	}()
 
 	// Start the server, lisenting at port conf.Server.Port
-	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", conf.Server.Port)))
+	e.Start(fmt.Sprintf(":%d", conf.Server.Port))
 }
